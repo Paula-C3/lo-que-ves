@@ -1,0 +1,101 @@
+[
+  {
+    "id": "p1",
+    "lecture_id": "l1",
+    "user_id": "u1",
+    "type": "image",
+    "content_url": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=600",
+    "caption": "Esto cambió cómo entiendo los embeddings completamente.",
+    "timestamp": "hace 5 minutos"
+  },
+  {
+    "id": "p2",
+    "lecture_id": "l1",
+    "user_id": "u2",
+    "type": "text",
+    "content_url": null,
+    "caption": "No esperaba que mencionara casos de uso en infraestructura civil. Me llevé mucho más de lo que vine a buscar.",
+    "timestamp": "hace 12 minutos"
+  },
+  {
+    "id": "p3",
+    "lecture_id": "l1",
+    "user_id": "u3",
+    "type": "image",
+    "content_url": "https://images.unsplash.com/photo-1655720828018-edd2daec9349?w=600",
+    "caption": "La demo en vivo fue lo mejor. Ver el modelo responder en tiempo real fue increíble.",
+    "timestamp": "hace 18 minutos"
+  },
+  {
+    "id": "p4",
+    "lecture_id": "l1",
+    "user_id": "u1",
+    "type": "text",
+    "content_url": null,
+    "caption": "Finalmente entendí la diferencia entre fine-tuning y RAG. Explicado de forma perfecta.",
+    "timestamp": "hace 30 minutos"
+  },
+  {
+    "id": "p5",
+    "lecture_id": "l1",
+    "user_id": "u2",
+    "type": "image",
+    "content_url": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600",
+    "caption": "Este diagrama lo voy a guardar para siempre.",
+    "timestamp": "hace 45 minutos"
+  },
+  {
+    "id": "p6",
+    "lecture_id": "l3",
+    "user_id": "u1",
+    "type": "text",
+    "content_url": null,
+    "caption": "Zero-trust architecture explicado de forma que por fin tiene sentido. Ojalá todos los coloquios fueran así.",
+    "timestamp": "hace 7 días"
+  },
+  {
+    "id": "p7",
+    "lecture_id": "l3",
+    "user_id": "u2",
+    "type": "image",
+    "content_url": "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600",
+    "caption": "El diagrama de JWT flows quedó grabado en mi cabeza.",
+    "timestamp": "hace 7 días"
+  },
+  {
+    "id": "p8",
+    "lecture_id": "l3",
+    "user_id": "u3",
+    "type": "text",
+    "content_url": null,
+    "caption": "Vine sin saber nada de microservicios y salí con ganas de rediseñar todo mi proyecto.",
+    "timestamp": "hace 8 días"
+  },
+  {
+    "id": "p9",
+    "lecture_id": "l4",
+    "user_id": "u3",
+    "type": "text",
+    "content_url": null,
+    "caption": "Pensé que iba a ser muy técnico pero fue muy accesible. Ojalá hubiera durado más.",
+    "timestamp": "hace 14 días"
+  },
+  {
+    "id": "p10",
+    "lecture_id": "l4",
+    "user_id": "u1",
+    "type": "image",
+    "content_url": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600",
+    "caption": "Ver el brazo robótico en acción fue un momento que no me esperaba en un coloquio.",
+    "timestamp": "hace 14 días"
+  },
+  {
+    "id": "p11",
+    "lecture_id": "l4",
+    "user_id": "u2",
+    "type": "text",
+    "content_url": null,
+    "caption": "Me conecté con la expositora al final. Una conexión que no esperaba y que suma mucho.",
+    "timestamp": "hace 15 días"
+  }
+]

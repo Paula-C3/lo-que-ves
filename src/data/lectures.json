@@ -1,0 +1,50 @@
+[
+  {
+    "id": "l1",
+    "status": "live",
+    "title": "IA en la Ingeniería Moderna",
+    "banner": "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200",
+    "classroom": "Aula Magna H-101",
+    "datetime": "2026-05-10T10:00:00",
+    "description": "Una exploración de cómo los modelos de lenguaje y visión están redefiniendo los flujos de trabajo en ingeniería de software, diseño estructural y análisis de datos.",
+    "speakers": [
+      { "name": "Dr. Rafael Mora", "instagram": "#", "linkedin": "#", "twitter": "#" }
+    ]
+  },
+  {
+    "id": "l2",
+    "status": "upcoming",
+    "title": "Diseño Sostenible en el Siglo XXI",
+    "banner": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1200",
+    "classroom": "Sala de Conferencias B-204",
+    "datetime": "2026-05-17T09:00:00",
+    "description": "Arquitectura y construcción desde una perspectiva de impacto ambiental mínimo.",
+    "speakers": [
+      { "name": "Ing. Lucía Paredes", "instagram": "#", "linkedin": "#", "twitter": "#" }
+    ]
+  },
+  {
+    "id": "l3",
+    "status": "past",
+    "title": "Seguridad en Sistemas Distribuidos",
+    "banner": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200",
+    "classroom": "Lab de Cómputo C-305",
+    "datetime": "2026-05-03T11:00:00",
+    "description": "Estrategias modernas de cifrado, autenticación y manejo de identidad en arquitecturas de microservicios.",
+    "speakers": [
+      { "name": "Msc. Diego Alvarado", "instagram": "#", "linkedin": "#", "twitter": "#" }
+    ]
+  },
+  {
+    "id": "l4",
+    "status": "past",
+    "title": "Robótica y Automatización Industrial",
+    "banner": "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=1200",
+    "classroom": "Taller de Mecatrónica D-110",
+    "datetime": "2026-04-26T14:00:00",
+    "description": "Del brazo robótico al sistema autónomo: casos reales de implementación en la industria ecuatoriana.",
+    "speakers": [
+      { "name": "Dr. Andrés Vega", "instagram": "#", "linkedin": "#", "twitter": "#" }
+    ]
+  }
+]
