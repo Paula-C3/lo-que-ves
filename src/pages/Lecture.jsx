@@ -65,35 +65,15 @@ export default function Lecture() {
 
   useEffect(() => {
     getLectureById(id)
-      .then(data => {
-        setLecture(data)
-        setLoading(false)
-      })
-      .catch(err => {
-        setError(err.message)
-        setLoading(false)
-      })
+      .then(setLecture)
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false))
   }, [id])
 
   if (!currentUser) return <Navigate to="/" replace />
 
-  if (loading) {
-    return (
-      <div className="lecture-page">
-        <Navbar />
-        <div className="lecture-not-found">Cargando...</div>
-      </div>
-    )
-  }
-
-  if (error || !lecture) {
-    return (
-      <div className="lecture-page">
-        <Navbar />
-        <div className="lecture-not-found">Coloquio no encontrado.</div>
-      </div>
-    )
-  }
+  if (loading) return <div className="page-status">Cargando...</div>
+  if (error || !lecture) return <div className="page-status">Coloquio no encontrado.</div>
 
   const { date, time } = formatDate(lecture.datetime)
   const isLive = lecture.status === 'live'

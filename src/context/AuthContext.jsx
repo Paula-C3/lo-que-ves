@@ -10,8 +10,15 @@ function generateId() {
 }
 
 export function AuthProvider({ children }) {
-  const stored = localStorage.getItem(STORAGE_KEY)
-  const [currentUser, setCurrentUser] = useState(stored ? JSON.parse(stored) : null)
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY)
+      return stored ? JSON.parse(stored) : null
+    } catch {
+      localStorage.removeItem(STORAGE_KEY)
+      return null
+    }
+  })
 
   function login(code, career) {
     const found = usersData.find(u => u.code === code)

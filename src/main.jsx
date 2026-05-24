@@ -1,7 +1,7 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
+import { ErrorBoundary } from './components/ErrorBoundary'
 import App from './App.jsx'
 import './styles/globals.css'
 import './styles/login.css'
@@ -11,11 +11,11 @@ import './styles/profile.css'
 import './styles/admin.css'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  <ErrorBoundary>
     <BrowserRouter>
       <AuthProvider>
         <App />
       </AuthProvider>
     </BrowserRouter>
-  </StrictMode>,
+  </ErrorBoundary>,
 )

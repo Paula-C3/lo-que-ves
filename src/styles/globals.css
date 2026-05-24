@@ -44,3 +44,13 @@ input, select {
   font: inherit;
   color: inherit;
 }
+
+.page-status {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666666;
+  font-family: var(--font-body);
+  font-size: 14px;
+}

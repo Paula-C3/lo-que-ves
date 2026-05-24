@@ -106,35 +106,15 @@ export default function Home() {
 
   useEffect(() => {
     getLectures()
-      .then(data => {
-        setLectures(data)
-        setLoading(false)
-      })
-      .catch(err => {
-        setError(err.message)
-        setLoading(false)
-      })
+      .then(setLectures)
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false))
   }, [])
 
   if (!currentUser) return <Navigate to="/" replace />
 
-  if (loading) {
-    return (
-      <div className="home-page">
-        <Navbar />
-        <div className="home-loading">Cargando...</div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="home-page">
-        <Navbar />
-        <div className="home-loading" style={{ color: 'var(--color-accent)' }}>Error: {error}</div>
-      </div>
-    )
-  }
+  if (loading) return <div className="page-status">Cargando...</div>
+  if (error) return <div className="page-status" style={{ color: '#FFD400' }}>{error}</div>
 
   const live = lectures.find(l => l.status === 'live')
   const upcoming = lectures.find(l => l.status === 'upcoming')
