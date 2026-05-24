@@ -8,6 +8,7 @@ import './styles/login.css'
 import './styles/home.css'
 import './styles/lecture.css'
 import './styles/profile.css'
+import './styles/admin.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

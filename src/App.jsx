@@ -4,6 +4,7 @@ import Login from './pages/Login'
 import Home from './pages/Home'
 import Lecture from './pages/Lecture'
 import Profile from './pages/Profile'
+import Admin from './pages/Admin'
 
 function ProtectedRoute({ children }) {
   const { currentUser } = useAuth()
@@ -18,6 +19,7 @@ export default function App() {
       <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
       <Route path="/lecture/:id" element={<ProtectedRoute><Lecture /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Route path="/admin" element={<Admin />} />
     </Routes>
   )
 }

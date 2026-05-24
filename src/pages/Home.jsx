@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
-import lecturesData from '../data/lectures.json'
+import { getLectures } from '../lib/lecturesService'
 import brandSrc from '../assets/loquevesbrand.png'
 
 function formatDate(iso) {
@@ -100,12 +100,46 @@ function ArchiveCard({ lecture }) {
 
 export default function Home() {
   const { currentUser } = useAuth()
+  const [lectures, setLectures] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    getLectures()
+      .then(data => {
+        setLectures(data)
+        setLoading(false)
+      })
+      .catch(err => {
+        setError(err.message)
+        setLoading(false)
+      })
+  }, [])
+
   if (!currentUser) return <Navigate to="/" replace />
 
-  const live = lecturesData.find(l => l.status === 'live')
-  const upcoming = lecturesData.find(l => l.status === 'upcoming')
+  if (loading) {
+    return (
+      <div className="home-page">
+        <Navbar />
+        <div className="home-loading">Cargando...</div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="home-page">
+        <Navbar />
+        <div className="home-loading" style={{ color: 'var(--color-accent)' }}>Error: {error}</div>
+      </div>
+    )
+  }
+
+  const live = lectures.find(l => l.status === 'live')
+  const upcoming = lectures.find(l => l.status === 'upcoming')
   const featured = live || upcoming
-  const past = lecturesData.filter(l => l.status === 'past')
+  const past = lectures.filter(l => l.status === 'past')
 
   return (
     <div className="home-page">

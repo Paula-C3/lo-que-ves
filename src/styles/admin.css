@@ -1,0 +1,256 @@
+/* ========== ADMIN PAGE ========== */
+
+.admin-page {
+  width: 100%;
+  min-height: 100vh;
+  padding-bottom: 4rem;
+}
+
+/* ========== HEADER ========== */
+
+.admin-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding: 1.5rem 2rem;
+  background: #111111;
+}
+
+.admin-brand {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  letter-spacing: 0.05em;
+  color: var(--color-accent);
+  text-transform: uppercase;
+}
+
+.admin-brand-sub {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* ========== FORM CARD ========== */
+
+.admin-card {
+  max-width: 640px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #111111;
+  border: 1px solid #1E1E1E;
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.admin-section-heading {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text);
+  border-left: 4px solid var(--color-accent);
+  padding-left: 12px;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.admin-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.admin-input {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  background: #0A0A0A;
+  border: 1px solid #333;
+  border-radius: 2px;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.admin-input:focus {
+  border-color: var(--color-accent);
+}
+
+.admin-input::placeholder {
+  color: #555;
+}
+
+.admin-textarea {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  background: #0A0A0A;
+  border: 1px solid #333;
+  border-radius: 2px;
+  color: var(--color-text);
+  font-size: 0.9rem;
+  outline: none;
+  resize: vertical;
+  font-family: var(--font-body);
+  transition: border-color 0.2s;
+}
+
+.admin-textarea:focus {
+  border-color: var(--color-accent);
+}
+
+.admin-textarea::placeholder {
+  color: #555;
+}
+
+.admin-helper {
+  font-size: 0.75rem;
+  color: #666666;
+}
+
+.admin-social-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.admin-social-row .admin-field {
+  flex: 1;
+}
+
+.admin-submit {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--color-accent);
+  color: var(--color-base);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-radius: 2px;
+  transition: opacity 0.2s;
+}
+
+.admin-submit:hover {
+  opacity: 0.9;
+}
+
+.admin-submit:active {
+  opacity: 0.8;
+}
+
+.admin-error {
+  font-size: 0.8rem;
+  color: var(--color-accent);
+  text-align: center;
+}
+
+/* ========== LIST SECTION ========== */
+
+.admin-list-section {
+  max-width: 640px;
+  margin: 3rem auto 0;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.admin-empty {
+  text-align: center;
+  padding: 2rem 0;
+  color: #666666;
+  font-size: 0.9rem;
+}
+
+.admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.admin-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: #111111;
+  border: 1px solid #1E1E1E;
+  border-radius: 2px;
+}
+
+.admin-row-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.admin-row-title {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  color: var(--color-text);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.admin-status-badge {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2px;
+  border: 1px solid;
+}
+
+.admin-status-badge.live {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.admin-status-badge.upcoming {
+  color: var(--color-text);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.admin-status-badge.past {
+  color: #666666;
+  border-color: #333;
+}
+
+.admin-row-date {
+  font-size: 0.7rem;
+  color: #666666;
+}
+
+.admin-clock {
+  margin-right: 0.25rem;
+}
+
+.admin-delete {
+  font-size: 0.7rem;
+  color: #666666;
+  transition: color 0.2s;
+  white-space: nowrap;
+}
+
+.admin-delete:hover {
+  color: var(--color-accent);
+}
+
+@media (max-width: 480px) {
+  .admin-social-row {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .admin-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}

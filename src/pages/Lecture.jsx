@@ -3,7 +3,7 @@ import { useParams, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import AddTakeModal from '../components/AddTakeModal'
-import lecturesData from '../data/lectures.json'
+import { getLectureById } from '../lib/lecturesService'
 import postsData from '../data/posts.json'
 
 function formatDate(iso) {
@@ -53,17 +53,40 @@ function PostCard({ post }) {
 export default function Lecture() {
   const { currentUser } = useAuth()
   const { id } = useParams()
+  const [lecture, setLecture] = useState(null)
   const [posts, setPosts] = useState([])
   const [showModal, setShowModal] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     setPosts(postsData.filter(p => p.lecture_id === id))
   }, [id])
 
+  useEffect(() => {
+    getLectureById(id)
+      .then(data => {
+        setLecture(data)
+        setLoading(false)
+      })
+      .catch(err => {
+        setError(err.message)
+        setLoading(false)
+      })
+  }, [id])
+
   if (!currentUser) return <Navigate to="/" replace />
 
-  const lecture = lecturesData.find(l => l.id === id)
-  if (!lecture) {
+  if (loading) {
+    return (
+      <div className="lecture-page">
+        <Navbar />
+        <div className="lecture-not-found">Cargando...</div>
+      </div>
+    )
+  }
+
+  if (error || !lecture) {
     return (
       <div className="lecture-page">
         <Navbar />
