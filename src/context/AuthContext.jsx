@@ -1,13 +1,22 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useState, useEffect } from 'react'
 import { getUserByCode, createUser, updateUser } from '../lib/usersService'
 
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(() => {
-    const stored = localStorage.getItem('loquevesusr')
-    return stored ? JSON.parse(stored) : null
-  })
+  const [currentUser, setCurrentUser] = useState(null)
+  const [authReady, setAuthReady] = useState(false)
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem('loquevesusr')
+      if (stored) setCurrentUser(JSON.parse(stored))
+    } catch {
+      localStorage.removeItem('loquevesusr')
+    } finally {
+      setAuthReady(true)
+    }
+  }, [])
 
   async function login(code, career) {
     let user = await getUserByCode(code)
@@ -30,7 +39,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout, updateUser: updateUserProfile }}>
+    <AuthContext.Provider value={{ currentUser, authReady, login, logout, updateUser: updateUserProfile }}>
       {children}
     </AuthContext.Provider>
   )

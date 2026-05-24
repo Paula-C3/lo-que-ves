@@ -20,16 +20,24 @@ export default function Login() {
   const [career, setCareer] = useState('')
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
     setError('')
     if (!CODE_REGEX.test(code)) {
       setError('Código inválido — debe tener formato 003XXXXX')
       return
     }
-    login(code, career)
-    navigate('/home')
+    try {
+      setLoading(true)
+      await login(code, career)
+      navigate('/home')
+    } catch {
+      setError('Error al iniciar sesión. Intenta de nuevo.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -67,8 +75,8 @@ export default function Login() {
             {error && <span className="login-error">{error}</span>}
           </div>
 
-          <button type="submit" className="login-submit">
-            Ingresar
+          <button type="submit" className="login-submit" disabled={loading}>
+            {loading ? 'Ingresando...' : 'Ingresar'}
           </button>
         </form>
       </div>

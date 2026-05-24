@@ -7,15 +7,29 @@ import Profile from './pages/Profile'
 import Admin from './pages/Admin'
 
 function ProtectedRoute({ children }) {
-  const { currentUser } = useAuth()
+  const { currentUser, authReady } = useAuth()
+
+  if (!authReady) return null
+
   if (!currentUser) return <Navigate to="/" replace />
+
+  return children
+}
+
+function PublicRoute({ children }) {
+  const { currentUser, authReady } = useAuth()
+
+  if (!authReady) return null
+
+  if (currentUser) return <Navigate to="/home" replace />
+
   return children
 }
 
 export default function App() {
   return (
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route path="/" element={<PublicRoute><Login /></PublicRoute>} />
       <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
       <Route path="/lecture/:id" element={<ProtectedRoute><Lecture /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
