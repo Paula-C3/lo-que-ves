@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-export default function AddTakeModal({ lectureId, onClose, onSubmit }) {
+export default function AddTakeModal({ onClose, onSubmit }) {
   const [tab, setTab] = useState('imagen')
   const [imageUrl, setImageUrl] = useState('')
   const [caption, setCaption] = useState('')
@@ -8,16 +8,11 @@ export default function AddTakeModal({ lectureId, onClose, onSubmit }) {
   function handleSubmit(e) {
     e.preventDefault()
     if (!caption.trim()) return
-    const post = {
-      id: 'p' + Date.now(),
-      lecture_id: lectureId,
-      user_id: 'current',
+    onSubmit({
       type: tab === 'imagen' ? 'image' : 'text',
       content_url: tab === 'imagen' && imageUrl.trim() ? imageUrl.trim() : null,
       caption: caption.trim(),
-      timestamp: 'ahora mismo',
-    }
-    onSubmit(post)
+    })
     onClose()
   }
 

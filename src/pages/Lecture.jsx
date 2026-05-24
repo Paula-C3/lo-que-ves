@@ -4,7 +4,8 @@ import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import AddTakeModal from '../components/AddTakeModal'
 import { getLectureById } from '../lib/lecturesService'
-import postsData from '../data/posts.json'
+import { getPostsByLecture, createPost } from '../lib/postsService'
+import { supabase } from '../lib/supabase'
 
 function formatDate(iso) {
   const d = new Date(iso)
@@ -33,7 +34,7 @@ function PostCard({ post }) {
         <img src={post.content_url} alt="" className="post-image-src" loading="lazy" />
         <div className="post-body">
           <p className="post-caption">{post.caption}</p>
-          <span className="post-timestamp">{post.timestamp}</span>
+          <span className="post-timestamp">{post.timestamp_label}</span>
         </div>
       </div>
     )
@@ -44,7 +45,7 @@ function PostCard({ post }) {
       <div className="post-body">
         <span className="post-quote">"</span>
         <p className="post-caption">{post.caption}</p>
-        <span className="post-timestamp">{post.timestamp}</span>
+        <span className="post-timestamp">{post.timestamp_label}</span>
       </div>
     </div>
   )
@@ -60,7 +61,9 @@ export default function Lecture() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    setPosts(postsData.filter(p => p.lecture_id === id))
+    getPostsByLecture(id)
+      .then(setPosts)
+      .catch(() => {})
   }, [id])
 
   useEffect(() => {
@@ -69,6 +72,23 @@ export default function Lecture() {
       .catch(err => setError(err.message))
       .finally(() => setLoading(false))
   }, [id])
+
+  useEffect(() => {
+    if (!lecture || lecture.status !== 'live') return
+
+    const channel = supabase
+      .channel(`posts:${id}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'posts', filter: `lecture_id=eq.${id}` },
+        (payload) => {
+          setPosts(prev => [payload.new, ...prev])
+        }
+      )
+      .subscribe()
+
+    return () => supabase.removeChannel(channel)
+  }, [lecture, id])
 
   if (!currentUser) return <Navigate to="/" replace />
 
@@ -80,8 +100,19 @@ export default function Lecture() {
   const isUpcoming = lecture.status === 'upcoming'
   const isPast = lecture.status === 'past'
 
-  function handleAddPost(post) {
-    setPosts(prev => [post, ...prev])
+  async function handleAddPost({ type, content_url, caption }) {
+    try {
+      await createPost({
+        lecture_id: id,
+        user_id: currentUser.id,
+        type,
+        content_url,
+        caption,
+        timestamp_label: 'ahora mismo',
+      })
+    } catch (err) {
+      console.error('Error creating post:', err)
+    }
   }
 
   return (
@@ -147,7 +178,7 @@ export default function Lecture() {
         )}
       </section>
 
-      {!isPast && (
+      {isLive && (
         <button className="fab" onClick={() => setShowModal(true)} aria-label="Agregar aporte">
           +
         </button>
@@ -155,7 +186,6 @@ export default function Lecture() {
 
       {showModal && (
         <AddTakeModal
-          lectureId={id}
           onClose={() => setShowModal(false)}
           onSubmit={handleAddPost}
         />

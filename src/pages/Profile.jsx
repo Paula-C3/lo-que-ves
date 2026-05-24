@@ -2,18 +2,12 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
-import postsData from '../data/posts.json'
-import lecturesData from '../data/lectures.json'
+import { getPostsByUser } from '../lib/postsService'
+import { getLectures } from '../lib/lecturesService'
 
 const AVATAR_OPTIONS = [1, 5, 11, 14, 22, 33, 44, 47]
 
-function lectureTitleById(id) {
-  const lecture = lecturesData.find(l => l.id === id)
-  return lecture ? lecture.title : ''
-}
-
-function ContributionCard({ post }) {
-  const lectureTitle = lectureTitleById(post.lecture_id)
+function ContributionCard({ post, lectureTitle }) {
   const [hovered, setHovered] = useState(false)
 
   if (post.type === 'image') {
@@ -55,6 +49,9 @@ export default function Profile() {
   const [editedAvatar, setEditedAvatar] = useState('')
   const [saved, setSaved] = useState(false)
   const [fading, setFading] = useState(false)
+  const [posts, setPosts] = useState([])
+  const [lectureMap, setLectureMap] = useState({})
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (currentUser) {
@@ -63,9 +60,20 @@ export default function Profile() {
     }
   }, [currentUser])
 
-  if (!currentUser) return <Navigate to="/" replace />
+  useEffect(() => {
+    if (!currentUser) return
+    Promise.all([
+      getPostsByUser(currentUser.id),
+      getLectures(),
+    ]).then(([userPosts, lectures]) => {
+      setPosts(userPosts)
+      const map = {}
+      lectures.forEach(l => { map[l.id] = l.title })
+      setLectureMap(map)
+    }).catch(() => {}).finally(() => setLoading(false))
+  }, [currentUser])
 
-  const userPosts = postsData.filter(p => p.user_id === currentUser.id)
+  if (!currentUser) return <Navigate to="/" replace />
 
   function handleSave(e) {
     e.preventDefault()
@@ -140,12 +148,18 @@ export default function Profile() {
         <h2 className="profile-section-heading">MIS APORTES</h2>
         <p className="profile-contrib-subline">Todo lo que has dejado en los coloquios.</p>
 
-        {userPosts.length === 0 ? (
+        {loading ? (
+          <p className="page-status">Cargando...</p>
+        ) : posts.length === 0 ? (
           <p className="profile-contrib-empty">Aún no has dejado ningún aporte.</p>
         ) : (
           <div className="contrib-grid">
-            {userPosts.map(post => (
-              <ContributionCard key={post.id} post={post} />
+            {posts.map(post => (
+              <ContributionCard
+                key={post.id}
+                post={post}
+                lectureTitle={lectureMap[post.lecture_id] || ''}
+              />
             ))}
           </div>
         )}
