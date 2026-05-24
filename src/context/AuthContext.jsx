@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from 'react'
-import { getUserByCode, createUser, updateUser } from '../lib/usersService'
 
 const AuthContext = createContext(null)
 
@@ -19,9 +18,12 @@ export function AuthProvider({ children }) {
   }, [])
 
   async function login(code, career) {
-    let user = await getUserByCode(code)
-    if (!user) {
-      user = await createUser(code, career)
+    const user = {
+      id: 'a0000000-0000-0000-0000-000000000001',
+      code,
+      career,
+      name: `Estudiante ${code.slice(-4)}`,
+      avatar: 'https://i.pravatar.cc/150?img=1'
     }
     localStorage.setItem('loquevesusr', JSON.stringify(user))
     setCurrentUser(user)
@@ -33,7 +35,7 @@ export function AuthProvider({ children }) {
   }
 
   async function updateUserProfile(name, avatar) {
-    const updated = await updateUser(currentUser.id, name, avatar)
+    const updated = { ...currentUser, name, avatar }
     localStorage.setItem('loquevesusr', JSON.stringify(updated))
     setCurrentUser(updated)
   }
