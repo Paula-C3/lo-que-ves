@@ -1,17 +1,26 @@
 import { supabase } from './supabase'
 
-export async function getUserByCode(code) {
+export async function loginUser(code, career) {
   const { data, error } = await supabase
     .from('users')
     .select('*')
     .eq('code', code)
     .single()
 
-  if (error) return null
-  return data
+  if (error || !data) return { status: 'not_found' }
+  if (data.career !== career) return { status: 'mismatch' }
+  return { status: 'ok', user: data }
 }
 
-export async function createUser(code, career) {
+export async function registerUser(code, career) {
+  const { data: existing } = await supabase
+    .from('users')
+    .select('id')
+    .eq('code', code)
+    .single()
+
+  if (existing) return { status: 'already_exists' }
+
   const { data, error } = await supabase
     .from('users')
     .insert([{
@@ -24,7 +33,7 @@ export async function createUser(code, career) {
     .single()
 
   if (error) throw error
-  return data
+  return { status: 'ok', user: data }
 }
 
 export async function updateUser(id, name, avatar) {

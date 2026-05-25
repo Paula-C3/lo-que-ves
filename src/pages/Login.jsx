@@ -16,8 +16,9 @@ const CAREERS = [
 const CODE_REGEX = /^003\d{5}$/
 
 export default function Login() {
-  const { login } = useAuth()
+  const { login, register } = useAuth()
   const navigate = useNavigate()
+  const [mode, setMode] = useState('login')
   const [career, setCareer] = useState('')
   const [code, setCode] = useState('')
   const [error, setError] = useState('')
@@ -30,16 +31,31 @@ export default function Login() {
       setError('Código inválido — debe tener formato 003XXXXX')
       return
     }
+
     try {
       setLoading(true)
-      await login(code, career)
-      if (code === '00325284') {
-        navigate('/dashboard')
+
+      if (mode === 'login') {
+        const result = await login(code, career)
+        if (result.status === 'admin') {
+          navigate('/dashboard')
+        } else if (result.status === 'ok') {
+          navigate('/home')
+        } else if (result.status === 'not_found') {
+          setError('Código no registrado. ¿Es tu primera vez? Regístrate.')
+        } else if (result.status === 'mismatch') {
+          setError('Los datos no coinciden con los registrados.')
+        }
       } else {
-        navigate('/home')
+        const result = await register(code, career)
+        if (result.status === 'ok') {
+          navigate('/home')
+        } else if (result.status === 'already_exists') {
+          setError('Este código ya está registrado. Inicia sesión.')
+        }
       }
     } catch {
-      setError('Error al iniciar sesión. Intenta de nuevo.')
+      setError('Error de conexión. Intenta de nuevo.')
     } finally {
       setLoading(false)
     }
@@ -50,7 +66,9 @@ export default function Login() {
       <div className="login-form-side">
         <form className="login-form" onSubmit={handleSubmit}>
           <h1 className="login-title">Lo Que Ves</h1>
-          <p className="login-subtitle">En cada coloquio hay algo que te sirve.</p>
+          <p className="login-subtitle">
+            {mode === 'login' ? 'Inicia sesión' : 'Crea tu cuenta'}
+          </p>
 
           <div className="login-field">
             <label htmlFor="career">Carrera</label>
@@ -81,8 +99,26 @@ export default function Login() {
           </div>
 
           <button type="submit" className="login-submit" disabled={loading}>
-            {loading ? 'Ingresando...' : 'Ingresar'}
+            {loading ? 'Ingresando...' : mode === 'login' ? 'INGRESAR' : 'REGISTRARSE'}
           </button>
+
+          <p className="login-toggle">
+            {mode === 'login' ? (
+              <>
+                ¿Primera vez?{' '}
+                <button type="button" className="login-toggle-link" onClick={() => setMode('register')}>
+                  Regístrate aquí
+                </button>
+              </>
+            ) : (
+              <>
+                ¿Ya tienes cuenta?{' '}
+                <button type="button" className="login-toggle-link" onClick={() => setMode('login')}>
+                  Inicia sesión
+                </button>
+              </>
+            )}
+          </p>
         </form>
       </div>
 

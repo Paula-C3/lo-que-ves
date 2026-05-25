@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { loginUser, registerUser, updateUser } from '../lib/usersService'
 
 const AuthContext = createContext(null)
 
@@ -18,15 +19,34 @@ export function AuthProvider({ children }) {
   }, [])
 
   async function login(code, career) {
-    const user = {
-      id: 'a0000000-0000-0000-0000-000000000001',
-      code,
-      career,
-      name: `Estudiante ${code.slice(-4)}`,
-      avatar: 'https://i.pravatar.cc/150?img=1'
+    if (code === '00325284' && career === 'Administrador') {
+      const adminUser = {
+        id: 'admin',
+        code,
+        career,
+        name: 'Administrador',
+        avatar: 'https://i.pravatar.cc/150?img=1',
+      }
+      localStorage.setItem('loquevesusr', JSON.stringify(adminUser))
+      setCurrentUser(adminUser)
+      return { status: 'admin' }
     }
-    localStorage.setItem('loquevesusr', JSON.stringify(user))
-    setCurrentUser(user)
+
+    const result = await loginUser(code, career)
+    if (result.status === 'ok') {
+      localStorage.setItem('loquevesusr', JSON.stringify(result.user))
+      setCurrentUser(result.user)
+    }
+    return result
+  }
+
+  async function register(code, career) {
+    const result = await registerUser(code, career)
+    if (result.status === 'ok') {
+      localStorage.setItem('loquevesusr', JSON.stringify(result.user))
+      setCurrentUser(result.user)
+    }
+    return result
   }
 
   async function logout() {
@@ -35,7 +55,7 @@ export function AuthProvider({ children }) {
   }
 
   async function updateUserProfile(name, avatar) {
-    const updated = { ...currentUser, name, avatar }
+    const updated = await updateUser(currentUser.id, name, avatar)
     localStorage.setItem('loquevesusr', JSON.stringify(updated))
     setCurrentUser(updated)
   }
@@ -43,7 +63,7 @@ export function AuthProvider({ children }) {
   const isAdmin = currentUser?.code === '00325284'
 
   return (
-    <AuthContext.Provider value={{ currentUser, authReady, isAdmin, login, logout, updateUser: updateUserProfile }}>
+    <AuthContext.Provider value={{ currentUser, authReady, isAdmin, login, register, logout, updateUser: updateUserProfile }}>
       {children}
     </AuthContext.Provider>
   )
