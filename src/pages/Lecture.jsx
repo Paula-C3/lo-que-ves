@@ -28,9 +28,11 @@ function SocialIcon({ platform }) {
 }
 
 function PostCard({ post }) {
+  const isNew = post.timestamp_label === 'ahora mismo'
+
   if (post.type === 'image') {
     return (
-      <div className="post-card post-image">
+      <div className={`post-card post-image${isNew ? ' post-card--new' : ''}`}>
         <img src={post.content_url} alt="" className="post-image-src" loading="lazy" />
         <div className="post-body">
           <p className="post-caption">{post.caption}</p>
@@ -41,7 +43,7 @@ function PostCard({ post }) {
   }
 
   return (
-    <div className="post-card post-text">
+    <div className={`post-card post-text${isNew ? ' post-card--new' : ''}`}>
       <div className="post-body">
         <span className="post-quote">"</span>
         <p className="post-caption">{post.caption}</p>
@@ -77,7 +79,7 @@ export default function Lecture() {
     if (!lecture || lecture.status !== 'live') return
 
     const channel = supabase
-      .channel(`posts:${id}`)
+      .channel(`posts-live-${id}`)
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'posts', filter: `lecture_id=eq.${id}` },
@@ -85,7 +87,9 @@ export default function Lecture() {
           setPosts(prev => [payload.new, ...prev])
         }
       )
-      .subscribe()
+      .subscribe((status) => {
+        console.log('Realtime subscription status:', status)
+      })
 
     return () => supabase.removeChannel(channel)
   }, [lecture, id])
