@@ -92,6 +92,17 @@ export default function Lecture() {
           }
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'posts'
+        },
+        (payload) => {
+          setPosts(prev => prev.filter(p => p.id !== payload.old.id))
+        }
+      )
       .subscribe((status, err) => {
         console.log('[realtime]', status, err ?? '')
       })
