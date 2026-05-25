@@ -10,6 +10,7 @@ const CAREERS = [
   'Ingeniería Industrial',
   'Ingeniería Ambiental',
   'Arquitectura',
+  'Administrador',
 ]
 
 const CODE_REGEX = /^003\d{5}$/
@@ -32,7 +33,11 @@ export default function Login() {
     try {
       setLoading(true)
       await login(code, career)
-      navigate('/home')
+      if (code === '00325284') {
+        navigate('/dashboard')
+      } else {
+        navigate('/home')
+      }
     } catch {
       setError('Error al iniciar sesión. Intenta de nuevo.')
     } finally {

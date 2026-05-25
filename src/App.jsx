@@ -6,6 +6,7 @@ import Lecture from './pages/Lecture'
 import Profile from './pages/Profile'
 import Admin from './pages/Admin'
 import Analytics from './pages/Analytics'
+import Dashboard from './pages/Dashboard'
 
 function ProtectedRoute({ children }) {
   const { currentUser, authReady } = useAuth()
@@ -18,11 +19,13 @@ function ProtectedRoute({ children }) {
 }
 
 function PublicRoute({ children }) {
-  const { currentUser, authReady } = useAuth()
+  const { currentUser, authReady, isAdmin } = useAuth()
 
   if (!authReady) return null
 
-  if (currentUser) return <Navigate to="/home" replace />
+  if (currentUser) {
+    return <Navigate to={isAdmin ? '/dashboard' : '/home'} replace />
+  }
 
   return children
 }
@@ -46,6 +49,7 @@ export default function App() {
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/admin" element={<Admin />} />
       <Route path="/analytics" element={<AdminRoute><Analytics /></AdminRoute>} />
+      <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
     </Routes>
   )
 }

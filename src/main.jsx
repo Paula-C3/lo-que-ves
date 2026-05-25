@@ -10,6 +10,7 @@ import './styles/lecture.css'
 import './styles/profile.css'
 import './styles/admin.css'
 import './styles/analytics.css'
+import './styles/dashboard.css'
 
 createRoot(document.getElementById('root')).render(
   <ErrorBoundary>

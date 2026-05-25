@@ -1,0 +1,116 @@
+/* ========== DASHBOARD PAGE ========== */
+
+.dashboard-page {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.dashboard-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 480px;
+  width: 100%;
+}
+
+.dashboard-brand {
+  width: 160px;
+  height: auto;
+  display: block;
+}
+
+.dashboard-brand-fallback {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  color: var(--color-accent);
+  letter-spacing: 0.03em;
+}
+
+.dashboard-title {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  color: var(--color-text);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-top: 1.5rem;
+}
+
+.dashboard-welcome {
+  font-size: 0.9rem;
+  color: #666666;
+  margin-top: 0.25rem;
+}
+
+/* ========== MENU CARDS ========== */
+
+.dashboard-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  margin-top: 3rem;
+}
+
+.dashboard-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #111111;
+  border: 1px solid #1E1E1E;
+  border-radius: 2px;
+  padding: 1.75rem 2rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.dashboard-card:hover {
+  border-color: var(--color-accent);
+}
+
+.dashboard-card-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
+.dashboard-card-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  color: var(--color-text);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.dashboard-card-desc {
+  font-size: 0.8rem;
+  color: #666666;
+}
+
+.dashboard-card-arrow {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--color-accent);
+  line-height: 1;
+}
+
+/* ========== LOGOUT ========== */
+
+.dashboard-logout {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #666666;
+  transition: color 0.2s;
+  margin-top: 3rem;
+}
+
+.dashboard-logout:hover {
+  color: var(--color-accent);
+}
