@@ -45,6 +45,14 @@ export default function Dashboard() {
             </div>
             <span className="dashboard-card-arrow">→</span>
           </div>
+
+          <div className="dashboard-card" onClick={() => navigate('/moderation')}>
+            <div className="dashboard-card-text">
+              <span className="dashboard-card-title">MODERACIÓN</span>
+              <span className="dashboard-card-desc">Revisa y elimina contribuciones.</span>
+            </div>
+            <span className="dashboard-card-arrow">→</span>
+          </div>
         </div>
 
         <button className="dashboard-logout" onClick={handleLogout}>CERRAR SESIÓN</button>

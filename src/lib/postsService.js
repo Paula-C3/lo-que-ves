@@ -32,3 +32,22 @@ export async function createPost(post) {
   if (error) throw error
   return data
 }
+
+export async function getAllPosts() {
+  const { data, error } = await supabase
+    .from('posts')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) throw error
+  return data
+}
+
+export async function deletePost(id) {
+  const { error } = await supabase
+    .from('posts')
+    .delete()
+    .eq('id', id)
+
+  if (error) throw error
+}

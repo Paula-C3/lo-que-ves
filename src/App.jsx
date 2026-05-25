@@ -7,6 +7,7 @@ import Profile from './pages/Profile'
 import Admin from './pages/Admin'
 import Analytics from './pages/Analytics'
 import Dashboard from './pages/Dashboard'
+import Moderation from './pages/Moderation'
 
 function ProtectedRoute({ children }) {
   const { currentUser, authReady } = useAuth()
@@ -49,6 +50,7 @@ export default function App() {
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/admin" element={<Admin />} />
       <Route path="/analytics" element={<AdminRoute><Analytics /></AdminRoute>} />
+      <Route path="/moderation" element={<AdminRoute><Moderation /></AdminRoute>} />
       <Route path="/dashboard" element={<AdminRoute><Dashboard /></AdminRoute>} />
     </Routes>
   )
