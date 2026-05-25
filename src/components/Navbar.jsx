@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 import brandSrc from '../assets/loquevesbrand.png'
 
 export default function Navbar() {
+  const { isAdmin } = useAuth()
   const navigate = useNavigate()
   const [imgError, setImgError] = useState(false)
 
@@ -22,6 +24,11 @@ export default function Navbar() {
       </div>
       <div className="navbar-right">
         <span className="navbar-poli">POLI | Colegio de Ciencias e Ingeniería</span>
+        {isAdmin && (
+          <button className="navbar-analytics" onClick={() => navigate('/analytics')}>
+            ANALYTICS
+          </button>
+        )}
         <button className="navbar-profile" onClick={() => navigate('/profile')} aria-label="Perfil">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="8" r="4" />

@@ -40,8 +40,10 @@ export function AuthProvider({ children }) {
     setCurrentUser(updated)
   }
 
+  const isAdmin = currentUser?.code === '00325284'
+
   return (
-    <AuthContext.Provider value={{ currentUser, authReady, login, logout, updateUser: updateUserProfile }}>
+    <AuthContext.Provider value={{ currentUser, authReady, isAdmin, login, logout, updateUser: updateUserProfile }}>
       {children}
     </AuthContext.Provider>
   )

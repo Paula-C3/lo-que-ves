@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Lecture from './pages/Lecture'
 import Profile from './pages/Profile'
 import Admin from './pages/Admin'
+import Analytics from './pages/Analytics'
 
 function ProtectedRoute({ children }) {
   const { currentUser, authReady } = useAuth()
@@ -26,6 +27,16 @@ function PublicRoute({ children }) {
   return children
 }
 
+function AdminRoute({ children }) {
+  const { currentUser, authReady, isAdmin } = useAuth()
+
+  if (!authReady) return null
+  if (!currentUser) return <Navigate to="/" replace />
+  if (!isAdmin) return <Navigate to="/home" replace />
+
+  return children
+}
+
 export default function App() {
   return (
     <Routes>
@@ -34,6 +45,7 @@ export default function App() {
       <Route path="/lecture/:id" element={<ProtectedRoute><Lecture /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/admin" element={<Admin />} />
+      <Route path="/analytics" element={<AdminRoute><Analytics /></AdminRoute>} />
     </Routes>
   )
 }
