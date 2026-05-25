@@ -65,7 +65,8 @@ export default function Lecture() {
   useEffect(() => {
     getPostsByLecture(id)
       .then(setPosts)
-      .catch(() => {})
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false))
   }, [id])
 
   useEffect(() => {
@@ -76,23 +77,29 @@ export default function Lecture() {
   }, [id])
 
   useEffect(() => {
-    if (!lecture || lecture.status !== 'live') return
-
     const channel = supabase
-      .channel(`posts-live-${id}`)
+      .channel('posts-' + id)
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'posts', filter: `lecture_id=eq.${id}` },
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'posts'
+        },
         (payload) => {
-          setPosts(prev => [payload.new, ...prev])
+          if (payload.new.lecture_id === id) {
+            setPosts(prev => [payload.new, ...prev])
+          }
         }
       )
-      .subscribe((status) => {
-        console.log('Realtime subscription status:', status)
+      .subscribe((status, err) => {
+        console.log('[realtime]', status, err ?? '')
       })
 
-    return () => supabase.removeChannel(channel)
-  }, [lecture, id])
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [id])
 
   if (!currentUser) return <Navigate to="/" replace />
 
