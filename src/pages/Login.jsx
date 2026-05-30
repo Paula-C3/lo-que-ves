@@ -13,6 +13,7 @@ const CAREERS = [
   'Administrador',
 ]
 
+const ADMIN_CODES = ['00325284', '00092037']
 const CODE_REGEX = /^003\d{5}$/
 
 export default function Login() {
@@ -27,8 +28,9 @@ export default function Login() {
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
-    if (!CODE_REGEX.test(code)) {
-      setError('Código inválido — debe tener formato 003XXXXX')
+    const isValidCode = ADMIN_CODES.includes(code) || CODE_REGEX.test(code)
+    if (!isValidCode) {
+      setError('Código inválido. Formato: 003XXXXX')
       return
     }
 
@@ -40,7 +42,11 @@ export default function Login() {
         if (result.status === 'admin') {
           navigate('/dashboard')
         } else if (result.status === 'ok') {
-          navigate('/home')
+          if (ADMIN_CODES.includes(code)) {
+            navigate('/dashboard')
+          } else {
+            navigate('/home')
+          }
         } else if (result.status === 'not_found') {
           setError('Código no registrado. ¿Es tu primera vez? Regístrate.')
         } else if (result.status === 'mismatch') {

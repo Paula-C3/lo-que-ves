@@ -18,8 +18,10 @@ export function AuthProvider({ children }) {
     }
   }, [])
 
+  const ADMIN_CODES = ['00325284', '00092037']
+
   async function login(code, career) {
-    if (code === '00325284' && career === 'Administrador') {
+    if (ADMIN_CODES.includes(code) && career === 'Administrador') {
       const adminUser = {
         id: 'admin',
         code,
@@ -60,7 +62,7 @@ export function AuthProvider({ children }) {
     setCurrentUser(updated)
   }
 
-  const isAdmin = currentUser?.code === '00325284'
+  const isAdmin = ADMIN_CODES.includes(currentUser?.code)
 
   return (
     <AuthContext.Provider value={{ currentUser, authReady, isAdmin, login, register, logout, updateUser: updateUserProfile }}>
