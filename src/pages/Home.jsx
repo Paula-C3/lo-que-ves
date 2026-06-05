@@ -146,11 +146,19 @@ export default function Home() {
           <p className="home-hero-tagline">En cada coloquio hay algo que te sirve.</p>
           <div className="hero-accent" />
         </div>
-        {featured && (
-          <div className="home-hero-right">
-            <FeaturedCard lecture={featured} />
-          </div>
-        )}
+        <div className="home-hero-right">
+          {featured ? (
+            <div className="hero-card-wrapper">
+              <div className="hero-card-backdrop" />
+              <FeaturedCard lecture={featured} />
+            </div>
+          ) : (
+            <div className="hero-empty-arrow">
+              <span className="hero-empty-arrow__label">Ver archivo</span>
+              <div className="hero-empty-arrow__icon">↓</div>
+            </div>
+          )}
+        </div>
       </section>
 
       {upcoming.length > 0 && <UpcomingSection lectures={upcoming} />}
