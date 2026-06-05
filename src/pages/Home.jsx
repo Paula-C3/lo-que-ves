@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
-import { getLectures } from '../lib/lecturesService'
+import { getLectures, syncLectureStatuses } from '../lib/lecturesService'
 import brandSrc from '../assets/loquevesbrand.png'
 
 function formatDate(iso) {
@@ -33,34 +33,30 @@ function Hero() {
   )
 }
 
-function FeaturedLecture({ lecture }) {
+function LiveSection({ lectures }) {
   const navigate = useNavigate()
-  const { date, time } = formatDate(lecture.datetime)
-  const isLive = lecture.status === 'live'
+  const l = lectures[0]
+
+  const { date, time } = formatDate(l.datetime)
 
   return (
-    <section className="featured-section">
-      <h2 className="section-heading">AHORA</h2>
-      <div className="featured-card" onClick={() => navigate(`/lecture/${lecture.id}`)}>
-        <div className="featured-banner" style={{ backgroundImage: `url(${lecture.banner})` }}>
-          <div className="featured-overlay" />
-          <div className="featured-badge">
-            {isLive ? (
-              <>
-                <span className="live-dot" />
-                <span className="badge-text">EN VIVO</span>
-              </>
-            ) : (
-              <span className="badge-text badge-upcoming">PRÓXIMO</span>
-            )}
+    <section className="home-section">
+      <h2 className="section-heading">EN VIVO</h2>
+      <div className="lecture-card--live" onClick={() => navigate(`/lecture/${l.id}`)}>
+        <div className="live-card-banner" style={{ backgroundImage: `url(${l.banner})` }}>
+          <div className="live-card-tint" />
+          <div className="live-card-gradient" />
+          <div className="live-card-badge">
+            <span className="live-dot" />
+            <span className="badge-text">EN VIVO</span>
           </div>
-          <div className="featured-info">
-            <h3 className="featured-title">{lecture.title}</h3>
-            <p className="featured-meta">
-              <span>{lecture.classroom}</span>
-              <span className="featured-meta-sep">·</span>
+          <div className="live-card-info">
+            <h3 className="live-card-title">{l.title}</h3>
+            <p className="live-card-meta">
+              <span>{l.classroom}</span>
+              <span className="live-card-sep">·</span>
               <span>{date}</span>
-              <span className="featured-meta-sep">·</span>
+              <span className="live-card-sep">·</span>
               <span>{time}</span>
             </p>
           </div>
@@ -70,31 +66,56 @@ function FeaturedLecture({ lecture }) {
   )
 }
 
-function Archive({ lectures }) {
+function UpcomingSection({ lectures }) {
   return (
-    <section className="archive-section">
-      <h2 className="section-heading">ARCHIVO</h2>
-      <div className="archive-row">
-        {lectures.map(l => <ArchiveCard key={l.id} lecture={l} />)}
+    <section className="home-section">
+      <h2 className="section-heading">PRÓXIMOS</h2>
+      <div className="upcoming-grid">
+        {lectures.map(l => {
+          const { date, time } = formatDate(l.datetime)
+          return (
+            <div key={l.id} className="lecture-card--upcoming">
+              <div className="upcoming-card-banner" style={{ backgroundImage: `url(${l.banner})` }}>
+                <div className="upcoming-card-gradient" />
+                <span className="upcoming-badge">PRÓXIMO</span>
+                <div className="upcoming-card-info">
+                  <h3 className="upcoming-card-title">{l.title}</h3>
+                  <span className="upcoming-card-date">{date} · {time}</span>
+                </div>
+                <div className="upcoming-hover-overlay">
+                  <span className="upcoming-hover-text">Disponible pronto</span>
+                </div>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </section>
   )
 }
 
-function ArchiveCard({ lecture }) {
+function ArchiveSection({ lectures }) {
   const navigate = useNavigate()
-  const { date } = formatDate(lecture.datetime)
 
   return (
-    <div className="archive-card" onClick={() => navigate(`/lecture/${lecture.id}`)}>
-      <div className="archive-card-banner" style={{ backgroundImage: `url(${lecture.banner})` }}>
-        <div className="archive-card-overlay" />
-        <div className="archive-card-info">
-          <h3 className="archive-card-title">{lecture.title}</h3>
-          <p className="archive-card-date">{date}</p>
-        </div>
+    <section className="home-section">
+      <h2 className="section-heading">ARCHIVO</h2>
+      <div className="archive-list">
+        {lectures.map(l => {
+          const { date } = formatDate(l.datetime)
+          return (
+            <div key={l.id} className="archive-row-card" onClick={() => navigate(`/lecture/${l.id}`)}>
+              <img src={l.banner} alt="" className="archive-row-thumb" />
+              <div className="archive-row-body">
+                <h3 className="archive-row-title">{l.title}</h3>
+                <span className="archive-row-meta">{l.classroom} · {date}</span>
+              </div>
+              <span className="archive-row-link">VER →</span>
+            </div>
+          )
+        })}
       </div>
-    </div>
+    </section>
   )
 }
 
@@ -105,7 +126,8 @@ export default function Home() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    getLectures()
+    syncLectureStatuses()
+      .then(() => getLectures())
       .then(setLectures)
       .catch(err => setError(err.message))
       .finally(() => setLoading(false))
@@ -116,17 +138,17 @@ export default function Home() {
   if (loading) return <div className="page-status">Cargando...</div>
   if (error) return <div className="page-status" style={{ color: '#FFD400' }}>{error}</div>
 
-  const live = lectures.find(l => l.status === 'live')
-  const upcoming = lectures.find(l => l.status === 'upcoming')
-  const featured = live || upcoming
+  const live = lectures.filter(l => l.status === 'live')
+  const upcoming = lectures.filter(l => l.status === 'upcoming')
   const past = lectures.filter(l => l.status === 'past')
 
   return (
     <div className="home-page">
       <Navbar />
       <Hero />
-      {featured && <FeaturedLecture lecture={featured} />}
-      {past.length > 0 && <Archive lectures={past} />}
+      {live.length > 0 && <LiveSection lectures={live} />}
+      {upcoming.length > 0 && <UpcomingSection lectures={upcoming} />}
+      {past.length > 0 && <ArchiveSection lectures={past} />}
     </div>
   )
 }

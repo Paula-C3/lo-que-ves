@@ -170,42 +170,51 @@
   margin-bottom: 2rem;
 }
 
-/* ========== FEATURED LECTURE ========== */
-
-.featured-section {
+.home-section {
   max-width: 900px;
   margin: 0 auto;
   padding: 0 2rem 5rem;
 }
 
-.featured-card {
+/* ========== EN VIVO ========== */
+
+.lecture-card--live {
   cursor: pointer;
   overflow: hidden;
-  border-radius: 0;
 }
 
-.featured-banner {
+.live-card-banner {
   position: relative;
   width: 100%;
   height: 260px;
   background-size: cover;
   background-position: center;
+  background-color: var(--color-accent);
 }
 
-.featured-overlay {
+.live-card-tint {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 212, 0, 0.12);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.live-card-gradient {
   position: absolute;
   inset: 0;
   background: linear-gradient(to top, #0A0A0A 30%, transparent);
+  z-index: 1;
 }
 
-.featured-badge {
+.live-card-badge {
   position: absolute;
   top: 1rem;
   left: 1rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  z-index: 1;
+  z-index: 2;
 }
 
 .badge-text {
@@ -214,10 +223,6 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-accent);
-}
-
-.badge-upcoming {
-  color: var(--color-text);
 }
 
 .live-dot {
@@ -239,16 +244,16 @@
   }
 }
 
-.featured-info {
+.live-card-info {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
   padding: 2rem 1.5rem 1.5rem;
-  z-index: 1;
+  z-index: 2;
 }
 
-.featured-title {
+.live-card-title {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 4vw, 2.25rem);
   color: var(--color-text);
@@ -258,7 +263,7 @@
   margin-bottom: 0.5rem;
 }
 
-.featured-meta {
+.live-card-meta {
   font-size: 0.8rem;
   color: var(--color-accent);
   letter-spacing: 0.04em;
@@ -268,94 +273,167 @@
   gap: 0.35rem;
 }
 
-.featured-meta-sep {
+.live-card-sep {
   opacity: 0.4;
 }
 
 @media (min-width: 768px) {
-  .featured-banner {
+  .live-card-banner {
     height: 380px;
   }
 }
 
-/* ========== ARCHIVE ========== */
+/* ========== PRÓXIMOS ========== */
 
-.archive-section {
-  padding: 0 2rem 5rem;
-  max-width: 1200px;
-  margin: 0 auto;
+.upcoming-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 
-.archive-row {
-  display: flex;
-  gap: 1.25rem;
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  padding-bottom: 0.5rem;
-}
-
-.archive-row::-webkit-scrollbar {
-  display: none;
-}
-
-.archive-card {
-  flex: 0 0 260px;
-  height: 180px;
-  cursor: pointer;
-  overflow: hidden;
+.lecture-card--upcoming {
   opacity: 0.75;
-  transition: opacity 0.3s, border-color 0.3s;
-  border-bottom: 3px solid transparent;
+  cursor: not-allowed;
 }
 
-.archive-card:hover {
-  opacity: 1;
-  border-bottom-color: var(--color-accent);
-}
-
-.archive-card-banner {
+.upcoming-card-banner {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: 220px;
   background-size: cover;
   background-position: center;
+  overflow: hidden;
 }
 
-.archive-card-overlay {
+.upcoming-card-gradient {
   position: absolute;
   inset: 0;
   background: linear-gradient(to top, #0A0A0A 40%, transparent);
+  z-index: 1;
 }
 
-.archive-card-info {
+.upcoming-badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text);
+  z-index: 2;
+}
+
+.upcoming-card-info {
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 1.5rem 1rem 1rem;
-  z-index: 1;
+  padding: 1.25rem 1rem 1rem;
+  z-index: 2;
 }
 
-.archive-card-title {
+.upcoming-card-title {
   font-family: var(--font-display);
-  font-size: 1.1rem;
-  color: var(--color-text);
+  font-size: 1.2rem;
   letter-spacing: 0.01em;
   text-transform: uppercase;
-  line-height: 1.2;
+  color: var(--color-text);
   margin-bottom: 0.25rem;
+  line-height: 1.2;
 }
 
-.archive-card-date {
+.upcoming-card-date {
   font-size: 0.7rem;
   color: var(--color-accent);
   letter-spacing: 0.04em;
 }
 
-@media (min-width: 768px) {
-  .archive-card {
-    flex: 0 0 280px;
-    height: 200px;
+.upcoming-hover-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 3;
+}
+
+.lecture-card--upcoming:hover .upcoming-hover-overlay {
+  opacity: 1;
+}
+
+.upcoming-hover-text {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  color: var(--color-text);
+  text-transform: uppercase;
+}
+
+@media (max-width: 640px) {
+  .upcoming-grid {
+    grid-template-columns: 1fr;
   }
+}
+
+/* ========== ARCHIVO ========== */
+
+.archive-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.archive-row-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 1px solid #1E1E1E;
+  padding: 16px 0;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.archive-row-card:hover .archive-row-title {
+  color: #FFD400;
+}
+
+.archive-row-thumb {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.archive-row-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.archive-row-title {
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--color-text);
+  line-height: 1.2;
+  transition: color 0.2s;
+}
+
+.archive-row-meta {
+  font-size: 0.8rem;
+  color: #666666;
+  display: block;
+  margin-top: 0.25rem;
+}
+
+.archive-row-link {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  color: var(--color-accent);
+  flex-shrink: 0;
 }

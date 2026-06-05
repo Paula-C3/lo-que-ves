@@ -33,6 +33,25 @@ export async function getAllLectures() {
   return data
 }
 
+export async function syncLectureStatuses() {
+  const now = new Date().toISOString()
+
+  await supabase
+    .from('lectures')
+    .update({ status: 'live' })
+    .eq('status', 'upcoming')
+    .lte('datetime', now)
+    .lte('visible_from', now)
+
+  const fourHoursAgo = new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString()
+
+  await supabase
+    .from('lectures')
+    .update({ status: 'past' })
+    .eq('status', 'live')
+    .lte('datetime', fourHoursAgo)
+}
+
 export async function createLecture(lecture) {
   const { data, error } = await supabase
     .from('lectures')
