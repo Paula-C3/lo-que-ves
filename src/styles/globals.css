@@ -90,6 +90,42 @@ input, select {
   pointer-events: none;
 }
 
+.moderation-filter {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 480px;
+  margin-bottom: 32px;
+  padding: 0 2rem;
+}
+
+.moderation-filter__label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: #666666;
+  letter-spacing: 0.06em;
+}
+
+.moderation-filter__select {
+  background: #0A0A0A;
+  border: 1px solid #333333;
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  padding: 10px 14px;
+  width: 100%;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23FFD400' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.moderation-filter__select:focus {
+  outline: none;
+  border-color: var(--color-accent);
+}
+
 .page-status {
   min-height: 60vh;
   display: flex;

@@ -36,7 +36,7 @@ export async function createPost(post) {
 export async function getAllPosts() {
   const { data, error } = await supabase
     .from('posts')
-    .select('*')
+    .select('*, lectures!inner(id, title)')
     .order('created_at', { ascending: false })
 
   if (error) throw error

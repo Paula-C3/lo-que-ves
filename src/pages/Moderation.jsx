@@ -9,9 +9,9 @@ export default function Moderation() {
   const navigate = useNavigate()
   const [lectures, setLectures] = useState([])
   const [posts, setPosts] = useState([])
-  const [activeLecture, setActiveLecture] = useState(null)
+  const [selectedLecture, setSelectedLecture] = useState('all')
   const [confirming, setConfirming] = useState(null)
-  const [removing, setRemoving] = useState(null)
+  const [deleteError, setDeleteError] = useState('')
 
   useEffect(() => {
     Promise.all([
@@ -23,20 +23,23 @@ export default function Moderation() {
     })
   }, [])
 
-  const filtered = activeLecture
-    ? posts.filter(p => p.lecture_id === activeLecture)
-    : posts
+  const filtered = selectedLecture === 'all'
+    ? posts
+    : posts.filter(p => p.lecture_id === selectedLecture)
 
-  const lectureMap = Object.fromEntries(
-    lectures.map(l => [l.id, l.title])
-  )
+  async function handleConfirmDelete(postId) {
+    const row = document.getElementById(`post-row-${postId}`)
+    if (row) row.classList.add('post-row--removing')
 
-  function handleDelete(postId) {
-    setRemoving(postId)
-    setTimeout(() => {
-      setPosts(prev => prev.filter(p => p.id !== postId))
-      setRemoving(null)
-      setConfirming(null)
+    setTimeout(async () => {
+      try {
+        await deletePost(postId)
+        setPosts(prev => prev.filter(p => p.id !== postId))
+        setConfirming(null)
+      } catch (err) {
+        setDeleteError('Error al eliminar: ' + err.message)
+        if (row) row.classList.remove('post-row--removing')
+      }
     }, 300)
   }
 
@@ -54,32 +57,30 @@ export default function Moderation() {
         <BackToPanel />
       </div>
 
-      <div className="moderation-tabs">
-        <button
-          className={`moderation-tab${activeLecture === null ? ' is-active' : ''}`}
-          onClick={() => setActiveLecture(null)}
+      <div className="moderation-filter">
+        <label className="moderation-filter__label">FILTRAR POR COLOQUIO</label>
+        <select
+          className="moderation-filter__select"
+          value={selectedLecture}
+          onChange={e => setSelectedLecture(e.target.value)}
         >
-          TODOS
-        </button>
-        {lectures.map(l => (
-          <button
-            key={l.id}
-            className={`moderation-tab${activeLecture === l.id ? ' is-active' : ''}`}
-            onClick={() => setActiveLecture(l.id)}
-          >
-            {l.title}
-          </button>
-        ))}
+          <option value="all">Todos los coloquios</option>
+          {lectures.map(l => (
+            <option key={l.id} value={l.id}>{l.title}</option>
+          ))}
+        </select>
       </div>
 
       <div className="moderation-list">
+        {deleteError && <p className="admin-error">{deleteError}</p>}
         {filtered.length === 0 ? (
           <div className="moderation-empty">No hay aportes aquí.</div>
         ) : (
           filtered.map(p => (
             <div
               key={p.id}
-              className={`moderation-row${removing === p.id ? ' post-row--removing' : ''}`}
+              id={`post-row-${p.id}`}
+              className="moderation-row"
             >
               <div className="moderation-row-left">
                 {p.type === 'image' ? (
@@ -91,7 +92,7 @@ export default function Moderation() {
               <div className="moderation-row-center">
                 <p className="moderation-caption">{p.caption}</p>
                 <span className="moderation-meta">
-                  <span className="moderation-meta-lecture">{lectureMap[p.lecture_id] || 'Desconocido'}</span>
+                  <span className="moderation-meta-lecture">{p.lectures?.title || 'Desconocido'}</span>
                   <span className="moderation-meta-sep">·</span>
                   <span className="moderation-meta-time">{p.timestamp_label}</span>
                 </span>
@@ -100,7 +101,7 @@ export default function Moderation() {
                 {confirming === p.id ? (
                   <span className="moderation-confirm-box">
                     <span className="moderation-confirm-text">¿seguro?</span>
-                    <button className="moderation-confirm-yes" onClick={() => handleDelete(p.id)}>sí</button>
+                    <button className="moderation-confirm-yes" onClick={() => handleConfirmDelete(p.id)}>sí</button>
                     <button className="moderation-confirm-no" onClick={() => setConfirming(null)}>no</button>
                   </span>
                 ) : (
