@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getAllLectures, createLecture, deleteLecture } from '../lib/lecturesService'
+import { getAllLectures, createLecture, updateLecture, deleteLecture } from '../lib/lecturesService'
 
 function formatDateTime(iso) {
   const d = new Date(iso)
@@ -9,8 +9,15 @@ function formatDateTime(iso) {
   })
 }
 
+function toDatetimeLocal(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  const pad = n => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
 const emptyForm = {
-  id: '', title: '', banner: '', classroom: '', datetime: '',
+  title: '', banner: '', classroom: '', datetime: '',
   description: '', speaker_name: '', speaker_instagram: '',
   speaker_linkedin: '', speaker_twitter: '', status: 'upcoming',
   visible_from: '',
@@ -19,8 +26,11 @@ const emptyForm = {
 export default function Admin() {
   const [lectures, setLectures] = useState([])
   const [form, setForm] = useState({ ...emptyForm })
+  const [editingId, setEditingId] = useState(null)
+  const [editForm, setEditForm] = useState({})
   const [submitError, setSubmitError] = useState('')
   const [listError, setListError] = useState('')
+  const [editSuccess, setEditSuccess] = useState('')
 
   function loadLectures() {
     getAllLectures()
@@ -34,32 +44,102 @@ export default function Admin() {
     return e => setForm(prev => ({ ...prev, [field]: e.target.value }))
   }
 
+  function setEdit(field) {
+    return e => setEditForm(prev => ({ ...prev, [field]: e.target.value }))
+  }
+
+  function openEdit(l) {
+    if (editingId === l.id) {
+      setEditingId(null)
+      return
+    }
+    const speaker = l.speakers?.[0] || {}
+    setEditingId(l.id)
+    setEditForm({
+      title: l.title || '',
+      banner: l.banner || '',
+      classroom: l.classroom || '',
+      datetime: toDatetimeLocal(l.datetime),
+      description: l.description || '',
+      speaker_name: speaker.name || '',
+      speaker_instagram: speaker.instagram || '',
+      speaker_linkedin: speaker.linkedin || '',
+      speaker_twitter: speaker.twitter || '',
+      status: l.status || 'upcoming',
+      visible_from: toDatetimeLocal(l.visible_from),
+    })
+    setEditSuccess('')
+  }
+
   async function handleSubmit(e) {
     e.preventDefault()
     setSubmitError('')
-    const lecture = {
-      id: form.id,
+
+    if (!form.title || !form.classroom || !form.datetime || !form.description || !form.speaker_name) {
+      setSubmitError('Por favor completa los campos obligatorios.')
+      return
+    }
+
+    const visible_from = form.visible_from
+      ? new Date(form.visible_from).toISOString()
+      : new Date().toISOString()
+
+    const payload = {
       title: form.title,
-      banner: form.banner,
+      banner: form.banner || 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200',
       classroom: form.classroom,
-      datetime: form.datetime ? new Date(form.datetime).toISOString() : null,
+      datetime: new Date(form.datetime).toISOString(),
       description: form.description,
-      speakers: JSON.stringify([{
+      speakers: [{
         name: form.speaker_name,
         instagram: form.speaker_instagram || '#',
         linkedin: form.speaker_linkedin || '#',
-        twitter: form.speaker_twitter || '#',
-      }]),
-      status: form.status,
-      visible_from: form.visible_from ? new Date(form.visible_from).toISOString() : null,
+        twitter: form.speaker_twitter || '#'
+      }],
+      status: form.status || 'upcoming',
+      visible_from,
     }
 
     try {
-      await createLecture(lecture)
+      await createLecture(payload)
       loadLectures()
       setForm({ ...emptyForm })
     } catch (err) {
       setSubmitError(err.message)
+    }
+  }
+
+  async function handleEditSave(id) {
+    setEditSuccess('')
+    setListError('')
+
+    const visible_from = editForm.visible_from
+      ? new Date(editForm.visible_from).toISOString()
+      : new Date().toISOString()
+
+    const payload = {
+      title: editForm.title,
+      banner: editForm.banner || 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200',
+      classroom: editForm.classroom,
+      datetime: new Date(editForm.datetime).toISOString(),
+      description: editForm.description,
+      speakers: [{
+        name: editForm.speaker_name,
+        instagram: editForm.speaker_instagram || '#',
+        linkedin: editForm.speaker_linkedin || '#',
+        twitter: editForm.speaker_twitter || '#'
+      }],
+      status: editForm.status || 'upcoming',
+      visible_from,
+    }
+
+    try {
+      await updateLecture(id, payload)
+      loadLectures()
+      setEditingId(null)
+      setEditSuccess('Cambios guardados.')
+    } catch (err) {
+      setListError(err.message)
     }
   }
 
@@ -83,68 +163,63 @@ export default function Admin() {
         <h2 className="admin-section-heading">NUEVO COLOQUIO</h2>
 
         <div className="admin-field">
-          <label className="admin-label">ID único</label>
-          <input className="admin-input" placeholder="l5" value={form.id} onChange={set('id')} required />
+          <label className="admin-label">Título <span className="admin-required">*</span></label>
+          <input className="admin-input" value={form.title} onChange={set('title')} />
         </div>
 
         <div className="admin-field">
-          <label className="admin-label">Título</label>
-          <input className="admin-input" value={form.title} onChange={set('title')} required />
+          <label className="admin-label">URL del banner <span className="admin-optional">(opcional)</span></label>
+          <input className="admin-input" value={form.banner} onChange={set('banner')} />
         </div>
 
         <div className="admin-field">
-          <label className="admin-label">URL del banner</label>
-          <input className="admin-input" value={form.banner} onChange={set('banner')} required />
+          <label className="admin-label">Aula <span className="admin-required">*</span></label>
+          <input className="admin-input" value={form.classroom} onChange={set('classroom')} />
         </div>
 
         <div className="admin-field">
-          <label className="admin-label">Aula</label>
-          <input className="admin-input" value={form.classroom} onChange={set('classroom')} required />
+          <label className="admin-label">Fecha y hora <span className="admin-required">*</span></label>
+          <input type="datetime-local" className="admin-input" value={form.datetime} onChange={set('datetime')} />
         </div>
 
         <div className="admin-field">
-          <label className="admin-label">Fecha y hora</label>
-          <input type="datetime-local" className="admin-input" value={form.datetime} onChange={set('datetime')} required />
+          <label className="admin-label">Descripción <span className="admin-required">*</span></label>
+          <textarea className="admin-textarea" rows="3" value={form.description} onChange={set('description')} />
         </div>
 
         <div className="admin-field">
-          <label className="admin-label">Descripción</label>
-          <textarea className="admin-textarea" rows="3" value={form.description} onChange={set('description')} required />
-        </div>
-
-        <div className="admin-field">
-          <label className="admin-label">Nombre del expositor</label>
-          <input className="admin-input" value={form.speaker_name} onChange={set('speaker_name')} required />
+          <label className="admin-label">Nombre del expositor <span className="admin-required">*</span></label>
+          <input className="admin-input" value={form.speaker_name} onChange={set('speaker_name')} />
         </div>
 
         <div className="admin-social-row">
           <div className="admin-field">
-            <label className="admin-label">Instagram</label>
+            <label className="admin-label">Instagram <span className="admin-optional">(opcional)</span></label>
             <input className="admin-input" placeholder="URL o #" value={form.speaker_instagram} onChange={set('speaker_instagram')} />
           </div>
           <div className="admin-field">
-            <label className="admin-label">LinkedIn</label>
+            <label className="admin-label">LinkedIn <span className="admin-optional">(opcional)</span></label>
             <input className="admin-input" placeholder="URL o #" value={form.speaker_linkedin} onChange={set('speaker_linkedin')} />
           </div>
           <div className="admin-field">
-            <label className="admin-label">Twitter</label>
+            <label className="admin-label">Twitter <span className="admin-optional">(opcional)</span></label>
             <input className="admin-input" placeholder="URL o #" value={form.speaker_twitter} onChange={set('speaker_twitter')} />
           </div>
         </div>
 
         <div className="admin-field">
-          <label className="admin-label">Estado</label>
+          <label className="admin-label">Estado <span className="admin-optional">(opcional)</span></label>
           <select className="admin-input" value={form.status} onChange={set('status')}>
-            <option value="live">Live</option>
             <option value="upcoming">Upcoming</option>
+            <option value="live">Live</option>
             <option value="past">Past</option>
           </select>
         </div>
 
         <div className="admin-field">
-          <label className="admin-label">Visible desde</label>
-          <input type="datetime-local" className="admin-input" value={form.visible_from} onChange={set('visible_from')} required />
-          <span className="admin-helper">La charla solo aparecerá para los estudiantes a partir de esta fecha y hora.</span>
+          <label className="admin-label">Visible desde <span className="admin-optional">(opcional)</span></label>
+          <input type="datetime-local" className="admin-input" value={form.visible_from} onChange={set('visible_from')} />
+          <span className="admin-helper">Si se deja vacío, el coloquio será visible de inmediato para todos los usuarios.</span>
         </div>
 
         <button type="submit" className="admin-submit">GUARDAR COLOQUIO</button>
@@ -154,20 +229,99 @@ export default function Admin() {
       <section className="admin-list-section">
         <h2 className="admin-section-heading">COLOQUIOS REGISTRADOS</h2>
         {listError && <p className="admin-error">{listError}</p>}
+        {editSuccess && <p className="admin-success">{editSuccess}</p>}
         <div className="admin-list">
           {lectures.map(l => {
             const visibleFuture = new Date(l.visible_from) > new Date()
             return (
-              <div key={l.id} className="admin-row">
-                <div className="admin-row-info">
-                  <span className="admin-row-title">{l.title}</span>
-                  <span className={`admin-status-badge ${l.status}`}>{l.status}</span>
-                  <span className="admin-row-date">
-                    {visibleFuture && <span className="admin-clock">⏰</span>}
-                    {formatDateTime(l.visible_from)}
-                  </span>
+              <div key={l.id} className="admin-row-wrapper">
+                <div
+                  className={`admin-row${editingId === l.id ? ' is-expanded' : ''}`}
+                  onClick={() => openEdit(l)}
+                >
+                  <div className="admin-row-info">
+                    <span className="admin-row-title">{l.title}</span>
+                    <span className={`admin-status-badge ${l.status}`}>{l.status}</span>
+                    <span className="admin-row-date">
+                      {formatDateTime(l.datetime)}
+                    </span>
+                  </div>
+                  <div className="admin-row-actions">
+                    <span className="admin-edit-indicator">
+                      {editingId === l.id ? '▾ editar' : '▸ editar'}
+                    </span>
+                    <button className="admin-delete" onClick={e => { e.stopPropagation(); handleDelete(l.id) }}>eliminar</button>
+                  </div>
                 </div>
-                <button className="admin-delete" onClick={() => handleDelete(l.id)}>eliminar</button>
+
+                {editingId === l.id && (
+                  <div className="admin-row-edit" onClick={e => e.stopPropagation()}>
+                    <div className="admin-field">
+                      <label className="admin-label">Título <span className="admin-required">*</span></label>
+                      <input className="admin-input" value={editForm.title} onChange={setEdit('title')} />
+                    </div>
+
+                    <div className="admin-field">
+                      <label className="admin-label">URL del banner <span className="admin-optional">(opcional)</span></label>
+                      <input className="admin-input" value={editForm.banner} onChange={setEdit('banner')} />
+                    </div>
+
+                    <div className="admin-field">
+                      <label className="admin-label">Aula <span className="admin-required">*</span></label>
+                      <input className="admin-input" value={editForm.classroom} onChange={setEdit('classroom')} />
+                    </div>
+
+                    <div className="admin-field">
+                      <label className="admin-label">Fecha y hora <span className="admin-required">*</span></label>
+                      <input type="datetime-local" className="admin-input" value={editForm.datetime} onChange={setEdit('datetime')} />
+                    </div>
+
+                    <div className="admin-field">
+                      <label className="admin-label">Descripción <span className="admin-required">*</span></label>
+                      <textarea className="admin-textarea" rows="3" value={editForm.description} onChange={setEdit('description')} />
+                    </div>
+
+                    <div className="admin-field">
+                      <label className="admin-label">Nombre del expositor <span className="admin-required">*</span></label>
+                      <input className="admin-input" value={editForm.speaker_name} onChange={setEdit('speaker_name')} />
+                    </div>
+
+                    <div className="admin-social-row">
+                      <div className="admin-field">
+                        <label className="admin-label">Instagram <span className="admin-optional">(opcional)</span></label>
+                        <input className="admin-input" placeholder="URL o #" value={editForm.speaker_instagram} onChange={setEdit('speaker_instagram')} />
+                      </div>
+                      <div className="admin-field">
+                        <label className="admin-label">LinkedIn <span className="admin-optional">(opcional)</span></label>
+                        <input className="admin-input" placeholder="URL o #" value={editForm.speaker_linkedin} onChange={setEdit('speaker_linkedin')} />
+                      </div>
+                      <div className="admin-field">
+                        <label className="admin-label">Twitter <span className="admin-optional">(opcional)</span></label>
+                        <input className="admin-input" placeholder="URL o #" value={editForm.speaker_twitter} onChange={setEdit('speaker_twitter')} />
+                      </div>
+                    </div>
+
+                    <div className="admin-field">
+                      <label className="admin-label">Estado <span className="admin-optional">(opcional)</span></label>
+                      <select className="admin-input" value={editForm.status} onChange={setEdit('status')}>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="live">Live</option>
+                        <option value="past">Past</option>
+                      </select>
+                    </div>
+
+                    <div className="admin-field">
+                      <label className="admin-label">Visible desde <span className="admin-optional">(opcional)</span></label>
+                      <input type="datetime-local" className="admin-input" value={editForm.visible_from} onChange={setEdit('visible_from')} />
+                      <span className="admin-helper">Si se deja vacío, el coloquio será visible de inmediato para todos los usuarios.</span>
+                    </div>
+
+                    <div className="admin-edit-actions">
+                      <button className="admin-save-btn" onClick={() => handleEditSave(l.id)}>GUARDAR</button>
+                      <button className="admin-cancel-btn" onClick={() => setEditingId(null)}>CANCELAR</button>
+                    </div>
+                  </div>
+                )}
               </div>
             )
           })}

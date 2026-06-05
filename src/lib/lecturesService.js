@@ -36,7 +36,19 @@ export async function getAllLectures() {
 export async function createLecture(lecture) {
   const { data, error } = await supabase
     .from('lectures')
-    .insert([lecture])
+    .insert([{ ...lecture, id: crypto.randomUUID() }])
+    .select()
+    .single()
+
+  if (error) throw error
+  return data
+}
+
+export async function updateLecture(id, fields) {
+  const { data, error } = await supabase
+    .from('lectures')
+    .update(fields)
+    .eq('id', id)
     .select()
     .single()
 
