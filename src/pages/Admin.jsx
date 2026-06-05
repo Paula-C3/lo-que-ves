@@ -10,15 +10,20 @@ function formatDateTime(iso) {
   })
 }
 
-function toDatetimeLocal(iso) {
+function toDateValue(iso) {
   if (!iso) return ''
   const d = new Date(iso)
-  const pad = n => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+  return d.toISOString().split('T')[0]
+}
+
+function toTimeValue(iso) {
+  if (!iso) return ''
+  const d = new Date(iso)
+  return d.toTimeString().split(':').slice(0, 2).join(':')
 }
 
 const emptyForm = {
-  title: '', banner: '', classroom: '', datetime: '',
+  title: '', banner: '', classroom: '', date: '', time: '',
   description: '', speaker_name: '', speaker_instagram: '',
   speaker_linkedin: '', speaker_twitter: '', status: 'upcoming',
   visible_from: '',
@@ -49,6 +54,26 @@ export default function Admin() {
     return e => setEditForm(prev => ({ ...prev, [field]: e.target.value }))
   }
 
+  function handleBannerUpload(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setForm(prev => ({ ...prev, banner: reader.result }))
+    }
+    reader.readAsDataURL(file)
+  }
+
+  function handleEditBannerUpload(e) {
+    const file = e.target.files[0]
+    if (!file) return
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setEditForm(prev => ({ ...prev, banner: reader.result }))
+    }
+    reader.readAsDataURL(file)
+  }
+
   function openEdit(l) {
     if (editingId === l.id) {
       setEditingId(null)
@@ -60,14 +85,15 @@ export default function Admin() {
       title: l.title || '',
       banner: l.banner || '',
       classroom: l.classroom || '',
-      datetime: toDatetimeLocal(l.datetime),
+      date: toDateValue(l.datetime),
+      time: toTimeValue(l.datetime),
       description: l.description || '',
       speaker_name: speaker.name || '',
       speaker_instagram: speaker.instagram || '',
       speaker_linkedin: speaker.linkedin || '',
       speaker_twitter: speaker.twitter || '',
       status: l.status || 'upcoming',
-      visible_from: toDatetimeLocal(l.visible_from),
+      visible_from: toDateValue(l.visible_from),
     })
     setEditSuccess('')
   }
@@ -76,10 +102,12 @@ export default function Admin() {
     e.preventDefault()
     setSubmitError('')
 
-    if (!form.title || !form.classroom || !form.datetime || !form.description || !form.speaker_name) {
+    if (!form.title || !form.classroom || !form.date || !form.time || !form.description || !form.speaker_name) {
       setSubmitError('Por favor completa los campos obligatorios.')
       return
     }
+
+    const datetime = new Date(`${form.date}T${form.time}`).toISOString()
 
     const visible_from = form.visible_from
       ? new Date(form.visible_from).toISOString()
@@ -89,7 +117,7 @@ export default function Admin() {
       title: form.title,
       banner: form.banner || 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200',
       classroom: form.classroom,
-      datetime: new Date(form.datetime).toISOString(),
+      datetime,
       description: form.description,
       speakers: [{
         name: form.speaker_name,
@@ -114,6 +142,8 @@ export default function Admin() {
     setEditSuccess('')
     setListError('')
 
+    const datetime = new Date(`${editForm.date}T${editForm.time}`).toISOString()
+
     const visible_from = editForm.visible_from
       ? new Date(editForm.visible_from).toISOString()
       : new Date().toISOString()
@@ -122,7 +152,7 @@ export default function Admin() {
       title: editForm.title,
       banner: editForm.banner || 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200',
       classroom: editForm.classroom,
-      datetime: new Date(editForm.datetime).toISOString(),
+      datetime,
       description: editForm.description,
       speakers: [{
         name: editForm.speaker_name,
@@ -173,8 +203,11 @@ export default function Admin() {
         </div>
 
         <div className="admin-field">
-          <label className="admin-label">URL del banner <span className="admin-optional">(opcional)</span></label>
-          <input className="admin-input" value={form.banner} onChange={set('banner')} />
+          <label className="admin-label">Banner <span className="admin-optional">(opcional)</span></label>
+          <input type="file" accept="image/*" onChange={handleBannerUpload} className="form-input-file" />
+          {form.banner && (
+            <img src={form.banner} alt="preview" style={{ marginTop: '8px', width: '100%', maxHeight: '160px', objectFit: 'cover', borderRadius: '2px' }} />
+          )}
         </div>
 
         <div className="admin-field">
@@ -184,7 +217,10 @@ export default function Admin() {
 
         <div className="admin-field">
           <label className="admin-label">Fecha y hora <span className="admin-required">*</span></label>
-          <input type="datetime-local" className="admin-input" value={form.datetime} onChange={set('datetime')} />
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <input type="date" className="admin-input" value={form.date} onChange={set('date')} style={{ flex: 1 }} />
+            <input type="time" className="admin-input" value={form.time} onChange={set('time')} style={{ flex: 1 }} />
+          </div>
         </div>
 
         <div className="admin-field">
@@ -215,9 +251,9 @@ export default function Admin() {
         <div className="admin-field">
           <label className="admin-label">Estado <span className="admin-optional">(opcional)</span></label>
           <select className="admin-input" value={form.status} onChange={set('status')}>
-            <option value="upcoming">Upcoming</option>
-            <option value="live">Live</option>
-            <option value="past">Past</option>
+            <option value="upcoming">Próximo</option>
+            <option value="live">En vivo</option>
+            <option value="past">Archivado</option>
           </select>
         </div>
 
@@ -267,8 +303,11 @@ export default function Admin() {
                     </div>
 
                     <div className="admin-field">
-                      <label className="admin-label">URL del banner <span className="admin-optional">(opcional)</span></label>
-                      <input className="admin-input" value={editForm.banner} onChange={setEdit('banner')} />
+                      <label className="admin-label">Banner <span className="admin-optional">(opcional)</span></label>
+                      <input type="file" accept="image/*" onChange={handleEditBannerUpload} className="form-input-file" />
+                      {editForm.banner && (
+                        <img src={editForm.banner} alt="preview" style={{ marginTop: '8px', width: '100%', maxHeight: '160px', objectFit: 'cover', borderRadius: '2px' }} />
+                      )}
                     </div>
 
                     <div className="admin-field">
@@ -278,7 +317,10 @@ export default function Admin() {
 
                     <div className="admin-field">
                       <label className="admin-label">Fecha y hora <span className="admin-required">*</span></label>
-                      <input type="datetime-local" className="admin-input" value={editForm.datetime} onChange={setEdit('datetime')} />
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        <input type="date" className="admin-input" value={editForm.date} onChange={setEdit('date')} style={{ flex: 1 }} />
+                        <input type="time" className="admin-input" value={editForm.time} onChange={setEdit('time')} style={{ flex: 1 }} />
+                      </div>
                     </div>
 
                     <div className="admin-field">
@@ -309,9 +351,9 @@ export default function Admin() {
                     <div className="admin-field">
                       <label className="admin-label">Estado <span className="admin-optional">(opcional)</span></label>
                       <select className="admin-input" value={editForm.status} onChange={setEdit('status')}>
-                        <option value="upcoming">Upcoming</option>
-                        <option value="live">Live</option>
-                        <option value="past">Past</option>
+                        <option value="upcoming">Próximo</option>
+                        <option value="live">En vivo</option>
+                        <option value="past">Archivado</option>
                       </select>
                     </div>
 

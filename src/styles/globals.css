@@ -126,6 +126,29 @@ input, select {
   border-color: var(--color-accent);
 }
 
+.form-input-file {
+  background: #0A0A0A;
+  border: 1px solid #333333;
+  color: #666666;
+  font-family: var(--font-body);
+  font-size: 13px;
+  padding: 10px 14px;
+  width: 100%;
+  cursor: pointer;
+}
+
+.form-input-file::file-selector-button {
+  background: #1E1E1E;
+  border: none;
+  color: var(--color-accent);
+  font-family: var(--font-display);
+  font-size: 12px;
+  padding: 6px 12px;
+  margin-right: 12px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+}
+
 .page-status {
   min-height: 60vh;
   display: flex;
