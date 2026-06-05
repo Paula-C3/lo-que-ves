@@ -1,12 +1,11 @@
 .login-page {
-  display: flex;
-  height: 100vh;
-  width: 100vw;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
   overflow: hidden;
 }
 
 .login-form-side {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -170,7 +169,23 @@
 }
 
 @media (max-width: 768px) {
+  .login-page {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
   .login-hero {
-    display: none;
+    order: -1;
+    padding: 48px 32px 16px;
+    min-height: 200px;
+  }
+
+  .login-hero-text span {
+    font-size: clamp(4rem, 12vw, 6rem);
+  }
+
+  .login-form-side {
+    padding: 16px 32px 48px;
+    align-items: flex-start;
   }
 }
