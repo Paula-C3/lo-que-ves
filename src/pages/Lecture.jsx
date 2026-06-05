@@ -143,7 +143,10 @@ export default function Lecture() {
 
       <div
         className="lecture-banner"
-        style={{ backgroundImage: `url(${lecture.banner})` }}
+        style={{
+          backgroundImage: lecture.banner?.startsWith('#') ? 'none' : `url(${lecture.banner})`,
+          backgroundColor: lecture.banner?.startsWith('#') ? lecture.banner : '#0A0A0A',
+        }}
       >
         <div className="lecture-banner-overlay" />
         <div className="lecture-banner-content">

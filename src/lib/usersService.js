@@ -27,7 +27,7 @@ export async function registerUser(code, career) {
       code,
       career,
       name: `Estudiante ${code.slice(-4)}`,
-      avatar: 'https://i.pravatar.cc/150?img=1'
+      avatar: '#FFD400'
     }])
     .select()
     .single()

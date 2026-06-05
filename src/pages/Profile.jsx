@@ -4,8 +4,27 @@ import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import { getPostsByUser } from '../lib/postsService'
 import { supabase } from '../lib/supabase'
+import { AVATAR_COLORS } from '../lib/colors'
 
-const AVATAR_OPTIONS = [1, 5, 11, 14, 22, 33, 44, 47]
+function Avatar({ value, size = 120 }) {
+  const isColor = value?.startsWith('#')
+  return (
+    <div
+      className="profile-avatar"
+      style={{
+        width: size,
+        height: size,
+        borderRadius: '50%',
+        border: '3px solid var(--color-accent)',
+        background: isColor ? value : '#333',
+        backgroundImage: isColor ? 'none' : `url(${value})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        flexShrink: 0,
+      }}
+    />
+  )
+}
 
 function ContributionCard({ post }) {
   const [hovered, setHovered] = useState(false)
@@ -56,7 +75,7 @@ export default function Profile() {
   useEffect(() => {
     if (currentUser) {
       setEditedName(currentUser.name || '')
-      setEditedAvatar(currentUser.avatar || AVATAR_OPTIONS[0].toString())
+      setEditedAvatar(currentUser.avatar || AVATAR_COLORS[0])
     }
   }, [currentUser])
 
@@ -112,12 +131,7 @@ export default function Profile() {
       <Navbar />
 
       <div className="profile-header">
-        <img
-          src={currentUser.avatar}
-          alt=""
-          className="profile-avatar"
-          onError={e => { e.target.src = 'https://i.pravatar.cc/150?img=1' }}
-        />
+        <Avatar value={currentUser.avatar} />
         <h1 className="profile-name">{currentUser.name}</h1>
         <p className="profile-career">{currentUser.career}</p>
         <p className="profile-code">{currentUser.code}</p>
@@ -139,20 +153,15 @@ export default function Profile() {
         <div className="profile-field">
           <label className="profile-label">Avatar</label>
           <div className="avatar-picker">
-            {AVATAR_OPTIONS.map(n => {
-              const url = `https://i.pravatar.cc/150?img=${n}`
-              const selected = editedAvatar === url
-              return (
-                <button
-                  key={n}
-                  type="button"
-                  className={`avatar-option ${selected ? 'selected' : ''}`}
-                  onClick={() => setEditedAvatar(url)}
-                >
-                  <img src={url} alt="" />
-                </button>
-              )
-            })}
+            {AVATAR_COLORS.map(color => (
+              <button
+                key={color}
+                type="button"
+                className={`avatar-swatch ${editedAvatar === color ? 'avatar-swatch--selected' : ''}`}
+                style={{ background: color }}
+                onClick={() => setEditedAvatar(color)}
+              />
+            ))}
           </div>
         </div>
 

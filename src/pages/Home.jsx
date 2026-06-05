@@ -36,6 +36,7 @@ function Hero() {
 function LiveSection({ lectures }) {
   const navigate = useNavigate()
   const l = lectures[0]
+  const isBannerColor = l.banner?.startsWith('#')
 
   const { date, time } = formatDate(l.datetime)
 
@@ -43,7 +44,10 @@ function LiveSection({ lectures }) {
     <section className="home-section">
       <h2 className="section-heading">EN VIVO</h2>
       <div className="lecture-card--live" onClick={() => navigate(`/lecture/${l.id}`)}>
-        <div className="live-card-banner" style={{ backgroundImage: `url(${l.banner})` }}>
+        <div className="live-card-banner" style={{
+          backgroundImage: isBannerColor ? 'none' : `url(${l.banner})`,
+          backgroundColor: isBannerColor ? l.banner : '#0A0A0A',
+        }}>
           <div className="live-card-tint" />
           <div className="live-card-gradient" />
           <div className="live-card-badge">
@@ -72,10 +76,14 @@ function UpcomingSection({ lectures }) {
       <h2 className="section-heading">PRÓXIMOS</h2>
       <div className="upcoming-grid">
         {lectures.map(l => {
+          const isBannerColor = l.banner?.startsWith('#')
           const { date, time } = formatDate(l.datetime)
           return (
             <div key={l.id} className="lecture-card--upcoming">
-              <div className="upcoming-card-banner" style={{ backgroundImage: `url(${l.banner})` }}>
+              <div className="upcoming-card-banner" style={{
+                backgroundImage: isBannerColor ? 'none' : `url(${l.banner})`,
+                backgroundColor: isBannerColor ? l.banner : '#0A0A0A',
+              }}>
                 <div className="upcoming-card-gradient" />
                 <span className="upcoming-badge">PRÓXIMO</span>
                 <div className="upcoming-card-info">
@@ -102,10 +110,15 @@ function ArchiveSection({ lectures }) {
       <h2 className="section-heading">ARCHIVO</h2>
       <div className="archive-list">
         {lectures.map(l => {
+          const isBannerColor = l.banner?.startsWith('#')
           const { date } = formatDate(l.datetime)
           return (
             <div key={l.id} className="archive-row-card" onClick={() => navigate(`/lecture/${l.id}`)}>
-              <img src={l.banner} alt="" className="archive-row-thumb" />
+              {isBannerColor ? (
+                <div className="archive-row-thumb" style={{ background: l.banner }} />
+              ) : (
+                <img src={l.banner} alt="" className="archive-row-thumb" />
+              )}
               <div className="archive-row-body">
                 <h3 className="archive-row-title">{l.title}</h3>
                 <span className="archive-row-meta">{l.classroom} · {date}</span>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getAllLectures, createLecture, updateLecture, deleteLecture } from '../lib/lecturesService'
+import { BANNER_COLORS, randomColor } from '../lib/colors'
 import BackToPanel from '../components/BackToPanel'
 
 function formatDateTime(iso) {
@@ -115,7 +116,7 @@ export default function Admin() {
 
     const payload = {
       title: form.title,
-      banner: form.banner || 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200',
+      banner: form.banner || randomColor(BANNER_COLORS),
       classroom: form.classroom,
       datetime,
       description: form.description,
@@ -150,7 +151,7 @@ export default function Admin() {
 
     const payload = {
       title: editForm.title,
-      banner: editForm.banner || 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200',
+      banner: editForm.banner || randomColor(BANNER_COLORS),
       classroom: editForm.classroom,
       datetime,
       description: editForm.description,
