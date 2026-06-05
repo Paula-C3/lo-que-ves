@@ -14,7 +14,7 @@ export async function getPostsByLecture(lectureId) {
 export async function getPostsByUser(userId) {
   const { data, error } = await supabase
     .from('posts')
-    .select('*')
+    .select('*, lectures!inner(id, title)')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
 

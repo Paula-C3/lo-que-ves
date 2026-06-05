@@ -3,12 +3,13 @@ import { useNavigate, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import { getPostsByUser } from '../lib/postsService'
-import { getLectures } from '../lib/lecturesService'
+import { supabase } from '../lib/supabase'
 
 const AVATAR_OPTIONS = [1, 5, 11, 14, 22, 33, 44, 47]
 
-function ContributionCard({ post, lectureTitle }) {
+function ContributionCard({ post }) {
   const [hovered, setHovered] = useState(false)
+  const lectureTitle = post.lectures?.title || ''
 
   if (post.type === 'image') {
     return (
@@ -50,7 +51,6 @@ export default function Profile() {
   const [saved, setSaved] = useState(false)
   const [fading, setFading] = useState(false)
   const [posts, setPosts] = useState([])
-  const [lectureMap, setLectureMap] = useState({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -62,15 +62,33 @@ export default function Profile() {
 
   useEffect(() => {
     if (!currentUser) return
-    Promise.all([
-      getPostsByUser(currentUser.id),
-      getLectures(),
-    ]).then(([userPosts, lectures]) => {
-      setPosts(userPosts)
-      const map = {}
-      lectures.forEach(l => { map[l.id] = l.title })
-      setLectureMap(map)
-    }).catch(() => {}).finally(() => setLoading(false))
+    getPostsByUser(currentUser.id)
+      .then(setPosts)
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [currentUser])
+
+  useEffect(() => {
+    if (!currentUser) return
+
+    const channel = supabase
+      .channel('profile-posts-' + currentUser.id)
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'posts'
+        },
+        (payload) => {
+          setPosts(prev => prev.filter(p => p.id !== payload.old.id))
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
   }, [currentUser])
 
   if (!currentUser) return <Navigate to="/" replace />
@@ -158,7 +176,6 @@ export default function Profile() {
               <ContributionCard
                 key={post.id}
                 post={post}
-                lectureTitle={lectureMap[post.lecture_id] || ''}
               />
             ))}
           </div>
