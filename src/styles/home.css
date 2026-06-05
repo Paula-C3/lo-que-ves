@@ -181,6 +181,11 @@
 .lecture-card--live {
   cursor: pointer;
   overflow: hidden;
+  border: 3px solid var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent),
+              0 0 32px rgba(255, 212, 0, 0.25),
+              0 0 64px rgba(255, 212, 0, 0.1);
+  border-radius: 2px;
 }
 
 .live-card-banner {
