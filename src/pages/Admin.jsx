@@ -146,9 +146,9 @@ export default function Admin() {
   async function handleDelete(id) {
     try {
       await deleteLecture(id)
-      loadLectures()
+      setLectures(prev => prev.filter(l => l.id !== id))
     } catch (err) {
-      setListError(err.message)
+      setError('Error al eliminar: ' + err.message)
     }
   }
 
