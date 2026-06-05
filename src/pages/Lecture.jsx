@@ -221,16 +221,12 @@ export default function Lecture() {
         )}
       </section>
 
-      {isLive && (
-        <>
-          {showTooltip && (
-            <div className="fab-tooltip">Deja tu aporte</div>
-          )}
-          <button className="fab" onClick={() => setShowModal(true)} aria-label="Agregar aporte">
-            +
-          </button>
-        </>
+      {showTooltip && (
+        <div className="fab-tooltip">Deja tu aporte</div>
       )}
+      <button className="fab" onClick={() => setShowModal(true)} aria-label="Agregar aporte">
+        +
+      </button>
 
       {showModal && (
         <AddTakeModal
