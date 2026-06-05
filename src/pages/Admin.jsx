@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getAllLectures, createLecture, updateLecture, deleteLecture } from '../lib/lecturesService'
+import BackToPanel from '../components/BackToPanel'
 
 function formatDateTime(iso) {
   const d = new Date(iso)
@@ -158,6 +159,10 @@ export default function Admin() {
         <span className="admin-brand">ADMIN</span>
         <span className="admin-brand-sub">/ Lo Que Ves</span>
       </header>
+
+      <div style={{ padding: '0 2rem' }}>
+        <BackToPanel />
+      </div>
 
       <form className="admin-card" onSubmit={handleSubmit}>
         <h2 className="admin-section-heading">NUEVO COLOQUIO</h2>

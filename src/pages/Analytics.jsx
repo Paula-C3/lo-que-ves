@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import BackToPanel from '../components/BackToPanel'
 import { getTotalUsers, getPostsPerLecture, getLectureTitles } from '../lib/analyticsService'
 
 export default function Analytics() {
@@ -49,6 +50,10 @@ export default function Analytics() {
         </div>
         <button className="analytics-back" onClick={() => navigate('/home')}>← VOLVER</button>
       </header>
+
+      <div style={{ padding: '0 2rem' }}>
+        <BackToPanel />
+      </div>
 
       <div className="analytics-kpi-row">
         <div className="analytics-card">

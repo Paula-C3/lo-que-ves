@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import BackToPanel from '../components/BackToPanel'
 import { getAllPosts, deletePost } from '../lib/postsService'
 import { getAllLectures } from '../lib/lecturesService'
 import '../styles/moderation.css'
@@ -48,6 +49,10 @@ export default function Moderation() {
         </div>
         <button className="analytics-back" onClick={() => navigate('/dashboard')}>← PANEL</button>
       </header>
+
+      <div style={{ padding: '0 2rem' }}>
+        <BackToPanel />
+      </div>
 
       <div className="moderation-tabs">
         <button
