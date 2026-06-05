@@ -34,7 +34,11 @@ export default function Navbar() {
         ) : (
           <Link to="/profile" className="nav-user">
             <span className="nav-user__dot" style={{ background: dotColor }} />
-            <span className="nav-user__career">{currentUser?.career}</span>
+            <span className="nav-user__name">{currentUser?.name}</span>
+            <svg className="nav-user__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="8" r="4" stroke="#FFFFFF" strokeWidth="1.5"/>
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
           </Link>
         )}
       </div>
