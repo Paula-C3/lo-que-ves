@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import { getLectures, syncLectureStatuses } from '../lib/lecturesService'
 import brandSrc from '../assets/loquevesbrand.png'
+import { trackEvent, trackTimeSpent } from '../lib/analytics'
 
 function formatDate(iso) {
   const d = new Date(iso)
@@ -21,7 +22,14 @@ function FeaturedCard({ lecture }) {
   return (
     <div
       className={isLive ? 'lecture-card--live' : 'lecture-card--featured'}
-      onClick={() => navigate(`/lecture/${lecture.id}`)}
+      onClick={() => {
+        trackEvent('lecture_open', {
+          lecture_id: lecture.id,
+          lecture_title: lecture.title,
+          source: 'hero_featured',
+        })
+        navigate(`/lecture/${lecture.id}`)
+      }}
     >
       <div className="live-card-banner" style={{
         backgroundImage: isBannerColor ? 'none' : `url(${lecture.banner})`,
@@ -93,7 +101,14 @@ function ArchiveSection({ lectures }) {
           const isBannerColor = l.banner?.startsWith('#')
           const { date } = formatDate(l.datetime)
           return (
-            <div key={l.id} className="archive-row-card" onClick={() => navigate(`/lecture/${l.id}`)}>
+            <div key={l.id} className="archive-row-card" onClick={() => {
+              trackEvent('lecture_open', {
+                lecture_id: l.id,
+                lecture_title: l.title,
+                source: 'archive',
+              })
+              navigate(`/lecture/${l.id}`)
+            }}>
               {isBannerColor ? (
                 <div className="archive-row-thumb" style={{ background: l.banner }} />
               ) : (
@@ -124,6 +139,14 @@ export default function Home() {
       .then(setLectures)
       .catch(err => setError(err.message))
       .finally(() => setLoading(false))
+  }, [])
+
+  useEffect(() => {
+    const start = Date.now()
+    return () => {
+      const seconds = Math.round((Date.now() - start) / 1000)
+      trackTimeSpent('home', seconds)
+    }
   }, [])
 
   if (!currentUser) return <Navigate to="/" replace />

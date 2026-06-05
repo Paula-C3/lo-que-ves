@@ -5,6 +5,7 @@ import Navbar from '../components/Navbar'
 import { getPostsByUser } from '../lib/postsService'
 import { supabase } from '../lib/supabase'
 import { AVATAR_COLORS } from '../lib/colors'
+import { trackEvent, trackTimeSpent } from '../lib/analytics'
 
 function Avatar({ value, size = 120 }) {
   const isColor = value?.startsWith('#')
@@ -88,6 +89,14 @@ export default function Profile() {
   }, [currentUser])
 
   useEffect(() => {
+    const start = Date.now()
+    return () => {
+      const seconds = Math.round((Date.now() - start) / 1000)
+      trackTimeSpent('profile', seconds)
+    }
+  }, [])
+
+  useEffect(() => {
     if (!currentUser) return
 
     const channel = supabase
@@ -115,6 +124,10 @@ export default function Profile() {
   function handleSave(e) {
     e.preventDefault()
     updateUser(editedName, editedAvatar)
+    trackEvent('profile_saved', {
+      changed_name: editedName !== currentUser.name,
+      changed_avatar: editedAvatar !== currentUser.avatar,
+    })
     setSaved(true)
     setFading(false)
     setTimeout(() => setFading(true), 2000)

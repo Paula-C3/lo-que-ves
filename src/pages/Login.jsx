@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { trackEvent } from '../lib/analytics'
 
 const CAREERS = [
   'Ingeniería en Sistemas',
@@ -40,8 +41,10 @@ export default function Login() {
       if (mode === 'login') {
         const result = await login(code, career)
         if (result.status === 'admin') {
+          trackEvent('login', { career, type: 'login' })
           navigate('/dashboard')
         } else if (result.status === 'ok') {
+          trackEvent('login', { career, type: 'login' })
           if (ADMIN_CODES.includes(code)) {
             navigate('/dashboard')
           } else {
@@ -55,6 +58,7 @@ export default function Login() {
       } else {
         const result = await register(code, career)
         if (result.status === 'ok') {
+          trackEvent('login', { career, type: 'register' })
           navigate('/home')
         } else if (result.status === 'already_exists') {
           setError('Este código ya está registrado. Inicia sesión.')

@@ -6,6 +6,7 @@ import AddTakeModal from '../components/AddTakeModal'
 import { getLectureById } from '../lib/lecturesService'
 import { getPostsByLecture, createPost } from '../lib/postsService'
 import { supabase } from '../lib/supabase'
+import { trackEvent, trackTimeSpent } from '../lib/analytics'
 
 function formatDate(iso) {
   const d = new Date(iso)
@@ -90,6 +91,15 @@ export default function Lecture() {
   }, [id])
 
   useEffect(() => {
+    if (!lecture) return
+    const start = Date.now()
+    return () => {
+      const seconds = Math.round((Date.now() - start) / 1000)
+      trackTimeSpent('lecture_' + lecture.title, seconds)
+    }
+  }, [lecture])
+
+  useEffect(() => {
     const channel = supabase
       .channel('posts-' + id)
       .on(
@@ -144,6 +154,11 @@ export default function Lecture() {
         content_url,
         caption,
         timestamp_label: 'ahora mismo',
+      })
+      trackEvent('contribution_submitted', {
+        lecture_id: id,
+        lecture_title: lecture?.title,
+        type,
       })
     } catch (err) {
       console.error('Error creating post:', err)
@@ -224,7 +239,13 @@ export default function Lecture() {
       {showTooltip && (
         <div className="fab-tooltip">Deja tu aporte</div>
       )}
-      <button className="fab" onClick={() => setShowModal(true)} aria-label="Agregar aporte">
+      <button className="fab" onClick={() => {
+        trackEvent('fab_click', {
+          lecture_id: id,
+          lecture_title: lecture?.title,
+        })
+        setShowModal(true)
+      }} aria-label="Agregar aporte">
         +
       </button>
 
