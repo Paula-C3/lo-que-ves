@@ -68,7 +68,7 @@ export default function Login() {
   }
 
   return (
-    <div className="login-page">
+    <div className="login-page page-transition">
       <div className="login-form-side">
         <form className="login-form" onSubmit={handleSubmit}>
           <h1 className="login-title">Lo Que Ves</h1>

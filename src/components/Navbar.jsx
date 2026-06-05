@@ -1,12 +1,15 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import brandSrc from '../assets/loquevesbrand.png'
 
 export default function Navbar() {
-  const { isAdmin } = useAuth()
+  const { isAdmin, currentUser } = useAuth()
   const navigate = useNavigate()
   const [imgError, setImgError] = useState(false)
+
+  const isColor = currentUser?.avatar?.startsWith('#')
+  const dotColor = isColor ? currentUser.avatar : '#FFD400'
 
   return (
     <nav className="navbar">
@@ -29,12 +32,10 @@ export default function Navbar() {
             ← PANEL
           </button>
         ) : (
-          <button className="navbar-profile" onClick={() => navigate('/profile')} aria-label="Perfil">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 22c0-4 3.5-7 8-7s8 3 8 7" />
-            </svg>
-          </button>
+          <Link to="/profile" className="nav-user">
+            <span className="nav-user__dot" style={{ background: dotColor }} />
+            <span className="nav-user__career">{currentUser?.career}</span>
+          </Link>
         )}
       </div>
     </nav>

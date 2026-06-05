@@ -61,6 +61,19 @@ export default function Lecture() {
   const [showModal, setShowModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [showTooltip, setShowTooltip] = useState(() => {
+    return !localStorage.getItem('fab_tooltip_seen')
+  })
+
+  useEffect(() => {
+    if (showTooltip) {
+      const timer = setTimeout(() => {
+        setShowTooltip(false)
+        localStorage.setItem('fab_tooltip_seen', 'true')
+      }, 3000)
+      return () => clearTimeout(timer)
+    }
+  }, [showTooltip])
 
   useEffect(() => {
     getPostsByLecture(id)
@@ -138,7 +151,7 @@ export default function Lecture() {
   }
 
   return (
-    <div className="lecture-page">
+    <div className="lecture-page page-transition">
       <Navbar />
 
       <div
@@ -188,12 +201,17 @@ export default function Lecture() {
         </div>
       </div>
 
+      <hr className="section-separator" />
+
       <section className="lecture-feed-section">
         <h2 className="feed-heading">LO QUE VES</h2>
         <p className="feed-subline">Lo que otros se llevaron de este coloquio.</p>
 
         {posts.length === 0 ? (
-          <p className="feed-empty">Aún no hay contribuciones. ¡Sé el primero en compartir!</p>
+          <div className="empty-state">
+            <span className="empty-state__quote">"</span>
+            <p className="empty-state__text">Sé el primero en dejar lo que ves.</p>
+          </div>
         ) : (
           <div className="feed-masonry">
             {posts.map(post => (
@@ -204,9 +222,14 @@ export default function Lecture() {
       </section>
 
       {isLive && (
-        <button className="fab" onClick={() => setShowModal(true)} aria-label="Agregar aporte">
-          +
-        </button>
+        <>
+          {showTooltip && (
+            <div className="fab-tooltip">Deja tu aporte</div>
+          )}
+          <button className="fab" onClick={() => setShowModal(true)} aria-label="Agregar aporte">
+            +
+          </button>
+        </>
       )}
 
       {showModal && (

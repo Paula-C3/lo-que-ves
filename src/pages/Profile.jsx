@@ -127,7 +127,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="profile-page">
+    <div className="profile-page page-transition">
       <Navbar />
 
       <div className="profile-header">
@@ -178,7 +178,10 @@ export default function Profile() {
         {loading ? (
           <p className="page-status">Cargando...</p>
         ) : posts.length === 0 ? (
-          <p className="profile-contrib-empty">Aún no has dejado ningún aporte.</p>
+          <div className="empty-state">
+            <span className="empty-state__quote">"</span>
+            <p className="empty-state__text">Aún no has dejado ningún aporte.</p>
+          </div>
         ) : (
           <div className="contrib-grid">
             {posts.map(post => (

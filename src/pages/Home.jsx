@@ -12,61 +12,41 @@ function formatDate(iso) {
   return { date, time }
 }
 
-function Hero() {
-  const [imgError, setImgError] = useState(false)
-
-  return (
-    <section className="hero-section">
-      {imgError ? (
-        <div className="hero-fallback">LO QUE VES</div>
-      ) : (
-        <img
-          src={brandSrc}
-          alt="Lo Que Ves"
-          className="hero-image"
-          onError={() => setImgError(true)}
-        />
-      )}
-      <p className="hero-tagline">En cada coloquio hay algo que te sirve.</p>
-      <div className="hero-accent" />
-    </section>
-  )
-}
-
-function LiveSection({ lectures }) {
+function FeaturedCard({ lecture }) {
   const navigate = useNavigate()
-  const l = lectures[0]
-  const isBannerColor = l.banner?.startsWith('#')
-
-  const { date, time } = formatDate(l.datetime)
+  const isLive = lecture.status === 'live'
+  const isBannerColor = lecture.banner?.startsWith('#')
+  const { date, time } = formatDate(lecture.datetime)
 
   return (
-    <section className="home-section">
-      <h2 className="section-heading">EN VIVO</h2>
-      <div className="lecture-card--live" onClick={() => navigate(`/lecture/${l.id}`)}>
-        <div className="live-card-banner" style={{
-          backgroundImage: isBannerColor ? 'none' : `url(${l.banner})`,
-          backgroundColor: isBannerColor ? l.banner : '#0A0A0A',
-        }}>
-          <div className="live-card-tint" />
-          <div className="live-card-gradient" />
-          <div className="live-card-badge">
-            <span className="live-dot" />
-            <span className="badge-text">EN VIVO</span>
-          </div>
-          <div className="live-card-info">
-            <h3 className="live-card-title">{l.title}</h3>
-            <p className="live-card-meta">
-              <span>{l.classroom}</span>
-              <span className="live-card-sep">·</span>
-              <span>{date}</span>
-              <span className="live-card-sep">·</span>
-              <span>{time}</span>
-            </p>
-          </div>
+    <div
+      className={isLive ? 'lecture-card--live' : 'lecture-card--featured'}
+      onClick={() => navigate(`/lecture/${lecture.id}`)}
+    >
+      <div className="live-card-banner" style={{
+        backgroundImage: isBannerColor ? 'none' : `url(${lecture.banner})`,
+        backgroundColor: isBannerColor ? lecture.banner : '#0A0A0A',
+      }}>
+        <div className="live-card-tint" />
+        <div className="live-card-gradient" />
+        <div className="live-card-badge">
+          {isLive && <span className="live-dot" />}
+          <span className={`badge-text ${isLive ? '' : 'badge-upcoming'}`}>
+            {isLive ? 'EN VIVO' : 'PRÓXIMO'}
+          </span>
+        </div>
+        <div className="live-card-info">
+          <h3 className="live-card-title">{lecture.title}</h3>
+          <p className="live-card-meta">
+            <span>{lecture.classroom}</span>
+            <span className="live-card-sep">·</span>
+            <span>{date}</span>
+            <span className="live-card-sep">·</span>
+            <span>{time}</span>
+          </p>
         </div>
       </div>
-    </section>
+    </div>
   )
 }
 
@@ -154,12 +134,25 @@ export default function Home() {
   const live = lectures.filter(l => l.status === 'live')
   const upcoming = lectures.filter(l => l.status === 'upcoming')
   const past = lectures.filter(l => l.status === 'past')
+  const featured = live[0] || upcoming[0]
 
   return (
-    <div className="home-page">
+    <div className="home-page page-transition">
       <Navbar />
-      <Hero />
-      {live.length > 0 && <LiveSection lectures={live} />}
+
+      <section className="home-hero">
+        <div className="home-hero-left">
+          <img src={brandSrc} alt="Lo Que Ves" className="home-hero-logo" />
+          <p className="home-hero-tagline">En cada coloquio hay algo que te sirve.</p>
+          <div className="hero-accent" />
+        </div>
+        {featured && (
+          <div className="home-hero-right">
+            <FeaturedCard lecture={featured} />
+          </div>
+        )}
+      </section>
+
       {upcoming.length > 0 && <UpcomingSection lectures={upcoming} />}
       {past.length > 0 && <ArchiveSection lectures={past} />}
     </div>
