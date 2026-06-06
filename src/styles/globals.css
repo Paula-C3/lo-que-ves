@@ -340,6 +340,82 @@ input, select {
   pointer-events: none;
 }
 
+.modal-questions {
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-questions__heading {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: #666666;
+  margin-bottom: -8px;
+}
+
+.modal-question {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-question__label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: var(--color-text);
+  letter-spacing: 0.04em;
+}
+
+.modal-question__required {
+  color: var(--color-accent);
+}
+
+.modal-question__hint {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: #666666;
+  margin: 0;
+}
+
+.modal-scale {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.modal-scale__btn {
+  width: 44px;
+  height: 44px;
+  background: #0A0A0A;
+  border: 1px solid #333333;
+  color: var(--color-text);
+  font-family: var(--font-display);
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.modal-scale__btn:hover {
+  border-color: var(--color-accent);
+}
+
+.modal-scale__btn--selected {
+  background: var(--color-accent);
+  color: var(--color-base);
+  border-color: var(--color-accent);
+}
+
+.modal-scale__labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: #444444;
+  margin-top: 4px;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;

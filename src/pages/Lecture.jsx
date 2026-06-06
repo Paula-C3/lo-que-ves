@@ -145,7 +145,7 @@ export default function Lecture() {
   const isUpcoming = lecture.status === 'upcoming'
   const isPast = lecture.status === 'past'
 
-  async function handleAddPost({ type, content_url, caption }) {
+  async function handleAddPost({ type, content_url, caption, answers }) {
     try {
       await createPost({
         lecture_id: id,
@@ -154,6 +154,7 @@ export default function Lecture() {
         content_url,
         caption,
         timestamp_label: 'ahora mismo',
+        answers,
       })
       trackEvent('contribution_submitted', {
         lecture_id: id,
