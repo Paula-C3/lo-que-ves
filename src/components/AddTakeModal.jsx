@@ -1,33 +1,68 @@
 import { useState } from 'react'
+import { createPost } from '../lib/postsService'
+import { trackEvent } from '../lib/analytics'
 
-export default function AddTakeModal({ onClose, onSubmit }) {
+const inputStyle = {
+  background: '#0A0A0A',
+  border: '1px solid #333333',
+  color: '#FFFFFF',
+  fontFamily: 'inherit',
+  fontSize: '14px',
+  padding: '10px 14px',
+  width: '100%',
+  boxSizing: 'border-box',
+  borderRadius: '2px',
+}
+
+export default function AddTakeModal({ onClose, lectureId, currentUser }) {
   const [tab, setTab] = useState('imagen')
   const [imageUrl, setImageUrl] = useState('')
   const [caption, setCaption] = useState('')
   const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '' })
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
 
   const answersComplete =
     answers.q1.trim() !== '' && answers.q2 !== '' && answers.q3 !== ''
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    if (!caption.trim() || !answersComplete) return
-    onSubmit({
-      type: tab === 'imagen' ? 'image' : 'text',
-      content_url: tab === 'imagen' && imageUrl.trim() ? imageUrl.trim() : null,
-      caption: caption.trim(),
-      answers: {
-        q1: answers.q1,
-        q2: answers.q2,
-        q3: answers.q3,
-      },
-    })
+  function resetForm() {
     setAnswers({ q1: '', q2: '', q3: '' })
-    onClose()
+    setImageUrl('')
+    setCaption('')
+    setError('')
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    if (!caption.trim() || !answersComplete || submitting) return
+
+    try {
+      setSubmitting(true)
+      const type = tab === 'imagen' ? 'image' : 'text'
+      await createPost({
+        lecture_id: lectureId,
+        user_id: currentUser.id,
+        type,
+        content_url: type === 'image' && imageUrl.trim() ? imageUrl.trim() : null,
+        caption: caption.trim(),
+        timestamp_label: 'ahora mismo',
+        answers: { q1: answers.q1, q2: answers.q2, q3: answers.q3 },
+      })
+      trackEvent('contribution_submitted', {
+        lecture_id: lectureId,
+        type,
+      })
+      resetForm()
+      onClose()
+    } catch (err) {
+      setError('Error al publicar. Intenta de nuevo.')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   function handleOverlayClick() {
-    setAnswers({ q1: '', q2: '', q3: '' })
+    resetForm()
     onClose()
   }
 
@@ -37,7 +72,7 @@ export default function AddTakeModal({ onClose, onSubmit }) {
         <div className="modal-header">
           <span className="modal-brand">LO QUE VES</span>
           <button className="modal-close" onClick={() => {
-            setAnswers({ q1: '', q2: '', q3: '' })
+            resetForm()
             onClose()
           }}>×</button>
         </div>
@@ -52,9 +87,9 @@ export default function AddTakeModal({ onClose, onSubmit }) {
             <p className="modal-question__hint">¿Qué fue lo más relevante para ti?</p>
             <input
               type="text"
-              className="form-input"
               placeholder="Escribe tu respuesta..."
               value={answers.q1}
+              style={inputStyle}
               onChange={e => setAnswers(prev => ({ ...prev, q1: e.target.value }))}
             />
           </div>
@@ -65,8 +100,8 @@ export default function AddTakeModal({ onClose, onSubmit }) {
             </label>
             <p className="modal-question__hint">¿Cómo calificarías el contenido del coloquio?</p>
             <select
-              className="form-input"
               value={answers.q2}
+              style={{ ...inputStyle, appearance: 'none', cursor: 'pointer' }}
               onChange={e => setAnswers(prev => ({ ...prev, q2: e.target.value }))}
             >
               <option value="">Selecciona una opción</option>
@@ -159,13 +194,15 @@ export default function AddTakeModal({ onClose, onSubmit }) {
             )}
           </div>
 
+          {error && <p className="login-error">{error}</p>}
+
           <button
             type="submit"
             className="modal-submit"
-            disabled={!answersComplete}
-            style={{ opacity: answersComplete ? 1 : 0.4, cursor: answersComplete ? 'pointer' : 'not-allowed' }}
+            disabled={!answersComplete || submitting}
+            style={{ opacity: !answersComplete || submitting ? 0.4 : 1, cursor: !answersComplete || submitting ? 'not-allowed' : 'pointer' }}
           >
-            PUBLICAR
+            {submitting ? 'PUBLICANDO...' : 'PUBLICAR'}
           </button>
         </form>
       </div>

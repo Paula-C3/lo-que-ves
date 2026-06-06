@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import Navbar from '../components/Navbar'
 import AddTakeModal from '../components/AddTakeModal'
 import { getLectureById } from '../lib/lecturesService'
-import { getPostsByLecture, createPost } from '../lib/postsService'
+import { getPostsByLecture } from '../lib/postsService'
 import { supabase } from '../lib/supabase'
 import { trackEvent, trackTimeSpent } from '../lib/analytics'
 
@@ -145,27 +145,6 @@ export default function Lecture() {
   const isUpcoming = lecture.status === 'upcoming'
   const isPast = lecture.status === 'past'
 
-  async function handleAddPost({ type, content_url, caption, answers }) {
-    try {
-      await createPost({
-        lecture_id: id,
-        user_id: currentUser.id,
-        type,
-        content_url,
-        caption,
-        timestamp_label: 'ahora mismo',
-        answers,
-      })
-      trackEvent('contribution_submitted', {
-        lecture_id: id,
-        lecture_title: lecture?.title,
-        type,
-      })
-    } catch (err) {
-      console.error('Error creating post:', err)
-    }
-  }
-
   return (
     <div className="lecture-page page-transition">
       <Navbar />
@@ -253,7 +232,8 @@ export default function Lecture() {
       {showModal && (
         <AddTakeModal
           onClose={() => setShowModal(false)}
-          onSubmit={handleAddPost}
+          lectureId={id}
+          currentUser={currentUser}
         />
       )}
     </div>
