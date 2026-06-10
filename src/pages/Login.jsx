@@ -4,13 +4,20 @@ import { useAuth } from '../context/AuthContext'
 import { trackEvent } from '../lib/analytics'
 
 const CAREERS = [
-  'Ingeniería en Sistemas',
-  'Ingeniería Civil',
+  'Tecnología en Informática y Programación',
+  'Matemática',
+  'Ingeniería Química',
   'Ingeniería Mecánica',
-  'Ingeniería Eléctrica',
   'Ingeniería Industrial',
+  'Ingeniería en Matemáticas Aplicadas y Computación (MAC)',
+  'Ingeniería en Electrónica y Automatización',
+  'Ingeniería en Ciencias de la Computación',
+  'Ingeniería en Alimentos',
+  'Ingeniería en Agronomía',
+  'Ingeniería en Agroempresa',
+  'Ingeniería Civil',
   'Ingeniería Ambiental',
-  'Arquitectura',
+  'Física',
   'Administrador',
 ]
 
@@ -29,6 +36,10 @@ export default function Login() {
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
+    if (!career) {
+      setError('Por favor selecciona tu carrera.')
+      return
+    }
     const isValidCode = ADMIN_CODES.includes(code) || CODE_REGEX.test(code)
     if (!isValidCode) {
       setError('Código inválido. Formato: 003XXXXX')
