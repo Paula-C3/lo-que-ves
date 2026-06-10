@@ -9,9 +9,9 @@
 /* ========== HEADER ========== */
 
 .profile-header {
-  padding-top: 96px;
+  padding-top: 120px;
   background: #111111;
-  padding: 3rem 2rem 2rem;
+  padding: 120px 2rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;

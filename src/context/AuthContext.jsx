@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
         code,
         career,
         name: 'Administrador',
-        avatar: 'https://i.pravatar.cc/150?img=1',
+        avatar: '#FFD400',
       }
       localStorage.setItem('loquevesusr', JSON.stringify(adminUser))
       setCurrentUser(adminUser)
