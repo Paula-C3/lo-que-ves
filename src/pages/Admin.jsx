@@ -25,8 +25,7 @@ function toTimeValue(iso) {
 
 const emptyForm = {
   title: '', banner: '', classroom: '', date: '', time: '',
-  description: '', speaker_name: '', speaker_instagram: '',
-  speaker_linkedin: '', speaker_twitter: '', status: 'upcoming',
+  description: '', speaker_name: '', status: 'upcoming',
   visible_from: '',
 }
 
@@ -90,9 +89,6 @@ export default function Admin() {
       time: toTimeValue(l.datetime),
       description: l.description || '',
       speaker_name: speaker.name || '',
-      speaker_instagram: speaker.instagram || '',
-      speaker_linkedin: speaker.linkedin || '',
-      speaker_twitter: speaker.twitter || '',
       status: l.status || 'upcoming',
       visible_from: toDateValue(l.visible_from),
     })
@@ -120,12 +116,7 @@ export default function Admin() {
       classroom: form.classroom,
       datetime,
       description: form.description,
-      speakers: [{
-        name: form.speaker_name,
-        instagram: form.speaker_instagram || '#',
-        linkedin: form.speaker_linkedin || '#',
-        twitter: form.speaker_twitter || '#'
-      }],
+      speakers: [{ name: form.speaker_name }],
       status: form.status || 'upcoming',
       visible_from,
     }
@@ -155,12 +146,7 @@ export default function Admin() {
       classroom: editForm.classroom,
       datetime,
       description: editForm.description,
-      speakers: [{
-        name: editForm.speaker_name,
-        instagram: editForm.speaker_instagram || '#',
-        linkedin: editForm.speaker_linkedin || '#',
-        twitter: editForm.speaker_twitter || '#'
-      }],
+      speakers: [{ name: editForm.speaker_name }],
       status: editForm.status || 'upcoming',
       visible_from,
     }
@@ -232,21 +218,6 @@ export default function Admin() {
         <div className="admin-field">
           <label className="admin-label">Nombre del expositor <span className="admin-required">*</span></label>
           <input className="admin-input" value={form.speaker_name} onChange={set('speaker_name')} />
-        </div>
-
-        <div className="admin-social-row">
-          <div className="admin-field">
-            <label className="admin-label">Instagram <span className="admin-optional">(opcional)</span></label>
-            <input className="admin-input" placeholder="URL o #" value={form.speaker_instagram} onChange={set('speaker_instagram')} />
-          </div>
-          <div className="admin-field">
-            <label className="admin-label">LinkedIn <span className="admin-optional">(opcional)</span></label>
-            <input className="admin-input" placeholder="URL o #" value={form.speaker_linkedin} onChange={set('speaker_linkedin')} />
-          </div>
-          <div className="admin-field">
-            <label className="admin-label">Twitter <span className="admin-optional">(opcional)</span></label>
-            <input className="admin-input" placeholder="URL o #" value={form.speaker_twitter} onChange={set('speaker_twitter')} />
-          </div>
         </div>
 
         <div className="admin-field">
@@ -332,21 +303,6 @@ export default function Admin() {
                     <div className="admin-field">
                       <label className="admin-label">Nombre del expositor <span className="admin-required">*</span></label>
                       <input className="admin-input" value={editForm.speaker_name} onChange={setEdit('speaker_name')} />
-                    </div>
-
-                    <div className="admin-social-row">
-                      <div className="admin-field">
-                        <label className="admin-label">Instagram <span className="admin-optional">(opcional)</span></label>
-                        <input className="admin-input" placeholder="URL o #" value={editForm.speaker_instagram} onChange={setEdit('speaker_instagram')} />
-                      </div>
-                      <div className="admin-field">
-                        <label className="admin-label">LinkedIn <span className="admin-optional">(opcional)</span></label>
-                        <input className="admin-input" placeholder="URL o #" value={editForm.speaker_linkedin} onChange={setEdit('speaker_linkedin')} />
-                      </div>
-                      <div className="admin-field">
-                        <label className="admin-label">Twitter <span className="admin-optional">(opcional)</span></label>
-                        <input className="admin-input" placeholder="URL o #" value={editForm.speaker_twitter} onChange={setEdit('speaker_twitter')} />
-                      </div>
                     </div>
 
                     <div className="admin-field">

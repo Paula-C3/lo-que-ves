@@ -15,8 +15,6 @@ const inputStyle = {
 }
 
 export default function AddTakeModal({ onClose, lectureId, currentUser }) {
-  const [tab, setTab] = useState('imagen')
-  const [imageUrl, setImageUrl] = useState('')
   const [caption, setCaption] = useState('')
   const [answers, setAnswers] = useState({ q1: '', q2: '', q3: '' })
   const [submitting, setSubmitting] = useState(false)
@@ -27,7 +25,6 @@ export default function AddTakeModal({ onClose, lectureId, currentUser }) {
 
   function resetForm() {
     setAnswers({ q1: '', q2: '', q3: '' })
-    setImageUrl('')
     setCaption('')
     setError('')
   }
@@ -38,19 +35,17 @@ export default function AddTakeModal({ onClose, lectureId, currentUser }) {
 
     try {
       setSubmitting(true)
-      const type = tab === 'imagen' ? 'image' : 'text'
       await createPost({
         lecture_id: lectureId,
         user_id: currentUser.id,
-        type,
-        content_url: type === 'image' && imageUrl.trim() ? imageUrl.trim() : null,
+        type: 'text',
         caption: caption.trim(),
         timestamp_label: 'ahora mismo',
         answers: { q1: answers.q1, q2: answers.q2, q3: answers.q3 },
       })
       trackEvent('contribution_submitted', {
         lecture_id: lectureId,
-        type,
+        type: 'text',
       })
       resetForm()
       onClose()
@@ -136,62 +131,15 @@ export default function AddTakeModal({ onClose, lectureId, currentUser }) {
           </div>
         </div>
 
-        <div className="modal-tabs">
-          <button
-            className={`modal-tab ${tab === 'imagen' ? 'active' : ''}`}
-            onClick={() => setTab('imagen')}
-          >
-            Imagen
-          </button>
-          <button
-            className={`modal-tab ${tab === 'texto' ? 'active' : ''}`}
-            onClick={() => setTab('texto')}
-          >
-            Texto
-          </button>
-        </div>
-
         <form className="modal-form" onSubmit={handleSubmit}>
-          {tab === 'imagen' && (
-            <div className="modal-field">
-              <label className="modal-label">URL de la imagen</label>
-              <input
-                type="text"
-                className="modal-input"
-                placeholder="https://..."
-                value={imageUrl}
-                onChange={e => setImageUrl(e.target.value)}
-              />
-              {imageUrl && (
-                <img
-                  src={imageUrl}
-                  alt="Preview"
-                  className="modal-preview"
-                  onError={e => { e.target.style.display = 'none' }}
-                />
-              )}
-            </div>
-          )}
-
           <div className="modal-field">
-            {tab === 'texto' && (
-              <textarea
-                className="modal-textarea modal-textarea-lg"
-                placeholder="¿Qué te llevaste de este coloquio?"
-                value={caption}
-                onChange={e => setCaption(e.target.value)}
-                required
-              />
-            )}
-            {tab === 'imagen' && (
-              <textarea
-                className="modal-textarea"
-                placeholder="¿Qué te llevaste?"
-                value={caption}
-                onChange={e => setCaption(e.target.value)}
-                required
-              />
-            )}
+            <textarea
+              className="modal-textarea modal-textarea-lg"
+              placeholder="¿Qué te llevaste de este coloquio?"
+              value={caption}
+              onChange={e => setCaption(e.target.value)}
+              required
+            />
           </div>
 
           {error && <p className="login-error">{error}</p>}

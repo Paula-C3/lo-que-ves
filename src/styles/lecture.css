@@ -144,22 +144,6 @@
   color: var(--color-text);
 }
 
-.speaker-links {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.social-link {
-  color: rgba(255, 255, 255, 0.5);
-  transition: color 0.2s;
-  display: flex;
-  align-items: center;
-}
-
-.social-link:hover {
-  color: var(--color-accent);
-}
-
 @media (min-width: 768px) {
   .lecture-metadata {
     flex-direction: row;
@@ -365,32 +349,6 @@
 
 /* ========== TABS ========== */
 
-.modal-tabs {
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid #1E1E1E;
-  margin-bottom: 1.5rem;
-}
-
-.modal-tab {
-  padding: 0.6rem 1.25rem;
-  font-size: 0.85rem;
-  color: #666666;
-  border-bottom: 2px solid transparent;
-  transition: color 0.2s, border-color 0.2s;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.modal-tab.active {
-  color: var(--color-accent);
-  border-bottom-color: var(--color-accent);
-}
-
-.modal-tab:hover:not(.active) {
-  color: rgba(255, 255, 255, 0.6);
-}
-
 /* ========== FORM ========== */
 
 .modal-form {
@@ -408,30 +366,6 @@
 .modal-label {
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.6);
-}
-
-.modal-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background: #0A0A0A;
-  border: 1px solid #333;
-  border-radius: 2px;
-  color: var(--color-text);
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-.modal-input:focus {
-  border-color: var(--color-accent);
-}
-
-.modal-preview {
-  width: 100%;
-  max-height: 160px;
-  object-fit: cover;
-  border-radius: 2px;
-  margin-top: 0.25rem;
 }
 
 .modal-textarea {
@@ -457,8 +391,7 @@
   border-color: var(--color-accent);
 }
 
-.modal-textarea::placeholder,
-.modal-input::placeholder {
+.modal-textarea::placeholder {
   color: #555;
 }
 

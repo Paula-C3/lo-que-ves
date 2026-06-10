@@ -111,15 +111,6 @@
   color: #666666;
 }
 
-.admin-social-row {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.admin-social-row .admin-field {
-  flex: 1;
-}
-
 .admin-submit {
   width: 100%;
   padding: 0.85rem;
@@ -339,11 +330,6 @@
 }
 
 @media (max-width: 480px) {
-  .admin-social-row {
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
   .admin-row {
     flex-direction: column;
     align-items: flex-start;
