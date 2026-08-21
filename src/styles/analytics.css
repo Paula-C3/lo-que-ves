@@ -166,6 +166,127 @@
   flex-shrink: 0;
 }
 
+/* ========== ANSWERS SECTION ========== */
+
+.analytics-answers {
+  max-width: 900px;
+  margin: 64px auto 0;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.analytics-answers .analytics-card {
+  padding: 28px 32px;
+}
+
+.analytics-card__label {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: #666666;
+  letter-spacing: 0.04em;
+  margin-bottom: 20px;
+}
+
+.analytics-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.analytics-bar-row__label {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-text);
+  width: 140px;
+  flex-shrink: 0;
+}
+
+.analytics-bar-row__count {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--color-text);
+  width: 30px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.analytics-scale-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  height: 120px;
+}
+
+.analytics-scale-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+}
+
+.analytics-scale-col__bar {
+  width: 100%;
+  background: var(--color-accent);
+  border-radius: 2px 2px 0 0;
+  transition: height 0.6s ease;
+  min-height: 8px;
+}
+
+.analytics-scale-col__count {
+  font-family: var(--font-display);
+  font-size: 18px;
+  color: var(--color-text);
+}
+
+.analytics-scale-col__label {
+  font-family: var(--font-display);
+  font-size: 13px;
+  color: #666666;
+}
+
+.analytics-q1-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.analytics-q1-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-bottom: 1px solid #1E1E1E;
+}
+
+.analytics-q1-item__quote {
+  font-family: var(--font-display);
+  font-size: 24px;
+  color: var(--color-accent);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.analytics-q1-item__text {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: #AAAAAA;
+  line-height: 1.5;
+}
+
+.analytics-q1-more {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: #444444;
+  text-align: center;
+  padding-top: 8px;
+}
+
 @media (max-width: 600px) {
   .analytics-kpi-row {
     flex-direction: column;
